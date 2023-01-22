@@ -12,11 +12,14 @@ Główne założenia tego silnika to:
 
 https://learnopengl.com/Getting-started/Creating-a-window
 
-- glfw3 
+- glfw3 i glm
+   
     na Fedorze 37:
 ```
 sudo dnf install glfw-devel
+sudo dnf install glm-devel
 ```
+
 
 - możliwe że potrzebne też do glfw3 ( fedora 37 instaluje je automatycznie )
 ```
