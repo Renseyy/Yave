@@ -4,8 +4,11 @@
 #include <cmath>
 #include <GLFW/glfw3.h>
 
-#include "lib/Shader.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
+#include "lib/Shader.h"
 #include <iostream>
 
 typedef unsigned int uint;
@@ -58,9 +61,9 @@ int main()
     // ------------------------------------------------------------------
     float vertices[] = {
         // positions         // colors
-         0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  // bottom right
+         0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f,  // bottom right
         -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  // bottom left
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 0.0f   // top 
+         0.0f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f   // top 
     };
 
     uint VBO, VAO;
@@ -87,6 +90,7 @@ int main()
     // render loop
     // -----------
     float oldczas=glfwGetTime()-M_PI/2.0f;
+    uint calc = 0;
     while (!glfwWindowShouldClose(window))
     {
         // input
@@ -97,11 +101,13 @@ int main()
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //takie szare tuo
         glClear(GL_COLOR_BUFFER_BIT); //wciepaj
-
+        
 
         //pozmieniajmy kolorki
         float czas = glfwGetTime();
+        
         float val=sin(czas)/2.0f + 0.5f;
+        //std::cout<<val - 0.5f <<std::endl;
         vertices[7*i+3]=val;
         if(czas-oldczas>=2*M_PI){ //jeśli zrobiło obrót i zgasło
             i++;
@@ -111,10 +117,32 @@ int main()
             i=0;
 
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW); //przeładujmy
-        // render the triangle
+        // Pass time to 
+        //glUniform1f(glGetUniformLocation(program, "pauto"), pauto);
+
+
         ourShader.use();
+      
+        
+        glm::mat4 view          = glm::mat4(1.0f);
+        glm::mat4 projection    = glm::mat4(1.0f);
+        
+        view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -4.0f));
+        projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+       
+        unsigned int viewLoc  = glGetUniformLocation(ourShader.ID, "view");
+        
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+        
+        ourShader.setMat4("projection", projection);
+        unsigned int addonLoc = glGetUniformLocation(ourShader.ID, "addon");
+        glUniform1f(addonLoc,val);
+
+        // render the triangle
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+       
+        
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
