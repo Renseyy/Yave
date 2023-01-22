@@ -1,296 +1,659 @@
-/*
- * db-perlin - see license at the bottom, no warranty implied, use at your own risk;
- *     made by daniilsjb (https://github.com/daniilsjb/perlin-noise)
- *
- * The following is an implementation of Ken Perlin's Improved Noise in 1D, 2D, and 3D.
- * This code has no external dependencies and as such may easily be used as a library
- * in other projects.
- *
- * I wrote this with the primary goal of having a bit of fun and learning more about the
- * famous algorithm used everywhere in procedural generation. Ultimately, my goal was to
- * use this implementation in several other projects (it's always good to have a noise
- * generator lying around). I hope it could be useful to other people, too!
- *
- * Usage:
- *
- * This code is written as a single-header library using the same technique as stb libraries.
- * There must be exactly one source file (C++) which defines symbol `DB_PERLIN_IMPL` before
- * including this header. You may place such implementation in a dedicated file:
- *
- * ```cpp
- * #define DB_PERLIN_IMPL
- * #include "db_perlin.hpp"
- * ```
- *
- * Compile that file together with the rest of the program, and all other files may then simply
- * include this header without any additional work.
- *
- * To generate noise, simply use the `perlin` function under `db` namespace. There are three
- * overloads accounting for each dimension, so pass 1-3 arguments to generate noise in the
- * corresponding number of dimensions.
- *
- * The implementation has template specializations to work with either floats or doubles,
- * depending on the desired accuracy.
- */
+//----------------------------------------------------------------------------------------
+//
+//	siv::PerlinNoise
+//	Perlin noise library for modern C++
+//
+//	Copyright (C) 2013-2021 Ryo Suzuki <reputeless@gmail.com>
+//
+//	Permission is hereby granted, free of charge, to any person obtaining a copy
+//	of this software and associated documentation files(the "Software"), to deal
+//	in the Software without restriction, including without limitation the rights
+//	to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+//	copies of the Software, and to permit persons to whom the Software is
+//	furnished to do so, subject to the following conditions :
+//	
+//	The above copyright notice and this permission notice shall be included in
+//	all copies or substantial portions of the Software.
+//	
+//	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+//	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//	THE SOFTWARE.
+//
+//----------------------------------------------------------------------------------------
 
-#ifndef DB_PERLIN_HPP
-#define DB_PERLIN_HPP
+# pragma once
+# include <cstdint>
+# include <algorithm>
+# include <array>
+# include <iterator>
+# include <numeric>
+# include <random>
+# include <type_traits>
 
-namespace db {
-    template<typename T>
-    auto perlin(T x) -> T;
+# if __has_include(<concepts>) && defined(__cpp_concepts)
+#	include <concepts>
+# endif
 
-    template<typename T>
-    auto perlin(T x, T y) -> T;
 
-    template<typename T>
-    auto perlin(T x, T y, T z) -> T;
+// Library major version
+# define SIVPERLIN_VERSION_MAJOR			3
+
+// Library minor version
+# define SIVPERLIN_VERSION_MINOR			0
+
+// Library revision version
+# define SIVPERLIN_VERSION_REVISION			0
+
+// Library version
+# define SIVPERLIN_VERSION			((SIVPERLIN_VERSION_MAJOR * 100 * 100) + (SIVPERLIN_VERSION_MINOR * 100) + (SIVPERLIN_VERSION_REVISION))
+
+
+// [[nodiscard]] for constructors
+# if (201907L <= __has_cpp_attribute(nodiscard))
+#	define SIVPERLIN_NODISCARD_CXX20 [[nodiscard]]
+# else
+#	define SIVPERLIN_NODISCARD_CXX20
+# endif
+
+
+// std::uniform_random_bit_generator concept
+# if __cpp_lib_concepts
+#	define SIVPERLIN_CONCEPT_URBG  template <std::uniform_random_bit_generator URBG>
+#	define SIVPERLIN_CONCEPT_URBG_ template <std::uniform_random_bit_generator URBG>
+# else
+#	define SIVPERLIN_CONCEPT_URBG  template <class URBG, std::enable_if_t<std::conjunction_v<std::is_invocable<URBG&>, std::is_unsigned<std::invoke_result_t<URBG&>>>>* = nullptr>
+#	define SIVPERLIN_CONCEPT_URBG_ template <class URBG, std::enable_if_t<std::conjunction_v<std::is_invocable<URBG&>, std::is_unsigned<std::invoke_result_t<URBG&>>>>*>
+# endif
+
+
+// arbitrary value for increasing entropy
+# ifndef SIVPERLIN_DEFAULT_Y
+#	define SIVPERLIN_DEFAULT_Y (0.12345)
+# endif
+
+// arbitrary value for increasing entropy
+# ifndef SIVPERLIN_DEFAULT_Z
+#	define SIVPERLIN_DEFAULT_Z (0.34567)
+# endif
+
+
+namespace siv
+{
+	template <class Float>
+	class BasicPerlinNoise
+	{
+	public:
+
+		static_assert(std::is_floating_point_v<Float>);
+
+		///////////////////////////////////////
+		//
+		//	Typedefs
+		//
+
+		using state_type = std::array<std::uint8_t, 256>;
+
+		using value_type = Float;
+
+		using default_random_engine = std::mt19937;
+
+		using seed_type = typename default_random_engine::result_type;
+
+		///////////////////////////////////////
+		//
+		//	Constructors
+		//
+
+		SIVPERLIN_NODISCARD_CXX20
+		constexpr BasicPerlinNoise() noexcept;
+
+		SIVPERLIN_NODISCARD_CXX20
+		explicit BasicPerlinNoise(seed_type seed);
+
+		SIVPERLIN_CONCEPT_URBG
+		SIVPERLIN_NODISCARD_CXX20
+		explicit BasicPerlinNoise(URBG&& urbg);
+
+		///////////////////////////////////////
+		//
+		//	Reseed
+		//
+
+		void reseed(seed_type seed);
+
+		SIVPERLIN_CONCEPT_URBG
+		void reseed(URBG&& urbg);
+
+		///////////////////////////////////////
+		//
+		//	Serialization
+		//
+
+		[[nodiscard]]
+		constexpr const state_type& serialize() const noexcept;
+
+		constexpr void deserialize(const state_type& state) noexcept;
+
+		///////////////////////////////////////
+		//
+		//	Noise (The result is in the range [-1, 1])
+		//
+
+		[[nodiscard]]
+		value_type noise1D(value_type x) const noexcept;
+
+		[[nodiscard]]
+		value_type noise2D(value_type x, value_type y) const noexcept;
+
+		[[nodiscard]]
+		value_type noise3D(value_type x, value_type y, value_type z) const noexcept;
+
+		///////////////////////////////////////
+		//
+		//	Noise (The result is remapped to the range [0, 1])
+		//
+
+		[[nodiscard]]
+		value_type noise1D_01(value_type x) const noexcept;
+
+		[[nodiscard]]
+		value_type noise2D_01(value_type x, value_type y) const noexcept;
+
+		[[nodiscard]]
+		value_type noise3D_01(value_type x, value_type y, value_type z) const noexcept;
+
+		///////////////////////////////////////
+		//
+		//	Octave noise (The result can be out of the range [-1, 1])
+		//
+
+		[[nodiscard]]
+		value_type octave1D(value_type x, std::int32_t octaves, value_type persistence = value_type(0.5)) const noexcept;
+
+		[[nodiscard]]
+		value_type octave2D(value_type x, value_type y, std::int32_t octaves, value_type persistence = value_type(0.5)) const noexcept;
+
+		[[nodiscard]]
+		value_type octave3D(value_type x, value_type y, value_type z, std::int32_t octaves, value_type persistence = value_type(0.5)) const noexcept;
+
+		///////////////////////////////////////
+		//
+		//	Octave noise (The result is clamped to the range [-1, 1])
+		//
+
+		[[nodiscard]]
+		value_type octave1D_11(value_type x, std::int32_t octaves, value_type persistence = value_type(0.5)) const noexcept;
+
+		[[nodiscard]]
+		value_type octave2D_11(value_type x, value_type y, std::int32_t octaves, value_type persistence = value_type(0.5)) const noexcept;
+
+		[[nodiscard]]
+		value_type octave3D_11(value_type x, value_type y, value_type z, std::int32_t octaves, value_type persistence = value_type(0.5)) const noexcept;
+
+		///////////////////////////////////////
+		//
+		//	Octave noise (The result is clamped and remapped to the range [0, 1])
+		//
+
+		[[nodiscard]]
+		value_type octave1D_01(value_type x, std::int32_t octaves, value_type persistence = value_type(0.5)) const noexcept;
+
+		[[nodiscard]]
+		value_type octave2D_01(value_type x, value_type y, std::int32_t octaves, value_type persistence = value_type(0.5)) const noexcept;
+
+		[[nodiscard]]
+		value_type octave3D_01(value_type x, value_type y, value_type z, std::int32_t octaves, value_type persistence = value_type(0.5)) const noexcept;
+
+		///////////////////////////////////////
+		//
+		//	Octave noise (The result is normalized to the range [-1, 1])
+		//
+
+		[[nodiscard]]
+		value_type normalizedOctave1D(value_type x, std::int32_t octaves, value_type persistence = value_type(0.5)) const noexcept;
+
+		[[nodiscard]]
+		value_type normalizedOctave2D(value_type x, value_type y, std::int32_t octaves, value_type persistence = value_type(0.5)) const noexcept;
+
+		[[nodiscard]]
+		value_type normalizedOctave3D(value_type x, value_type y, value_type z, std::int32_t octaves, value_type persistence = value_type(0.5)) const noexcept;
+
+		///////////////////////////////////////
+		//
+		//	Octave noise (The result is normalized and remapped to the range [0, 1])
+		//
+
+		[[nodiscard]]
+		value_type normalizedOctave1D_01(value_type x, std::int32_t octaves, value_type persistence = value_type(0.5)) const noexcept;
+
+		[[nodiscard]]
+		value_type normalizedOctave2D_01(value_type x, value_type y, std::int32_t octaves, value_type persistence = value_type(0.5)) const noexcept;
+
+		[[nodiscard]]
+		value_type normalizedOctave3D_01(value_type x, value_type y, value_type z, std::int32_t octaves, value_type persistence = value_type(0.5)) const noexcept;
+
+	private:
+
+		state_type m_permutation;
+	};
+
+	using PerlinNoise = BasicPerlinNoise<double>;
+
+	namespace perlin_detail
+	{
+		////////////////////////////////////////////////
+		//
+		//	These functions are provided for consistency.
+		//	You may get different results from std::shuffle() with different standard library implementations.
+		//
+		SIVPERLIN_CONCEPT_URBG
+		[[nodiscard]]
+		inline std::uint64_t Random(const std::uint64_t max, URBG&& urbg)
+		{
+			return (urbg() % (max + 1));
+		}
+
+		template <class RandomIt, class URBG>
+		inline void Shuffle(RandomIt first, RandomIt last, URBG&& urbg)
+		{
+			if (first == last)
+			{
+				return;
+			}
+
+			using difference_type = typename std::iterator_traits<RandomIt>::difference_type;
+
+			for (RandomIt it = first + 1; it < last; ++it)
+			{
+				const std::uint64_t n = static_cast<std::uint64_t>(it - first);
+				std::iter_swap(it, first + static_cast<difference_type>(Random(n, std::forward<URBG>(urbg))));
+			}
+		}
+		//
+		////////////////////////////////////////////////
+
+		template <class Float>
+		[[nodiscard]]
+		inline constexpr Float Fade(const Float t) noexcept
+		{
+			return t * t * t * (t * (t * 6 - 15) + 10);
+		}
+
+		template <class Float>
+		[[nodiscard]]
+		inline constexpr Float Lerp(const Float a, const Float b, const Float t) noexcept
+		{
+			return (a + (b - a) * t);
+		}
+
+		template <class Float>
+		[[nodiscard]]
+		inline constexpr Float Grad(const std::uint8_t hash, const Float x, const Float y, const Float z) noexcept
+		{
+			const std::uint8_t h = hash & 15;
+			const Float u = h < 8 ? x : y;
+			const Float v = h < 4 ? y : h == 12 || h == 14 ? x : z;
+			return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
+		}
+
+		template <class Float>
+		[[nodiscard]]
+		inline constexpr Float Remap_01(const Float x) noexcept
+		{
+			return (x * Float(0.5) + Float(0.5));
+		}
+
+		template <class Float>
+		[[nodiscard]]
+		inline constexpr Float Clamp_11(const Float x) noexcept
+		{
+			return std::clamp(x, Float(-1.0), Float(1.0));
+		}
+
+		template <class Float>
+		[[nodiscard]]
+		inline constexpr Float RemapClamp_01(const Float x) noexcept
+		{
+			if (x <= Float(-1.0))
+			{
+				return Float(0.0);
+			}
+			else if (Float(1.0) <= x)
+			{
+				return Float(1.0);
+			}
+
+			return (x * Float(0.5) + Float(0.5));
+		}
+
+		template <class Noise, class Float>
+		[[nodiscard]]
+		inline auto Octave1D(const Noise& noise, Float x, const std::int32_t octaves, const Float persistence) noexcept
+		{
+			using value_type = Float;
+			value_type result = 0;
+			value_type amplitude = 1;
+
+			for (std::int32_t i = 0; i < octaves; ++i)
+			{
+				result += (noise.noise1D(x) * amplitude);
+				x *= 2;
+				amplitude *= persistence;
+			}
+
+			return result;
+		}
+
+		template <class Noise, class Float>
+		[[nodiscard]]
+		inline auto Octave2D(const Noise& noise, Float x, Float y, const std::int32_t octaves, const Float persistence) noexcept
+		{
+			using value_type = Float;
+			value_type result = 0;
+			value_type amplitude = 1;
+
+			for (std::int32_t i = 0; i < octaves; ++i)
+			{
+				result += (noise.noise2D(x, y) * amplitude);
+				x *= 2;
+				y *= 2;
+				amplitude *= persistence;
+			}
+
+			return result;
+		}
+
+		template <class Noise, class Float>
+		[[nodiscard]]
+		inline auto Octave3D(const Noise& noise, Float x, Float y, Float z, const std::int32_t octaves, const Float persistence) noexcept
+		{
+			using value_type = Float;
+			value_type result = 0;
+			value_type amplitude = 1;
+
+			for (std::int32_t i = 0; i < octaves; ++i)
+			{
+				result += (noise.noise3D(x, y, z) * amplitude);
+				x *= 2;
+				y *= 2;
+				z *= 2;
+				amplitude *= persistence;
+			}
+
+			return result;
+		}
+
+		template <class Float>
+		[[nodiscard]]
+		inline constexpr Float MaxAmplitude(const std::int32_t octaves, const Float persistence) noexcept
+		{
+			using value_type = Float;
+			value_type result = 0;
+			value_type amplitude = 1;
+
+			for (std::int32_t i = 0; i < octaves; ++i)
+			{
+				result += amplitude;
+				amplitude *= persistence;
+			}
+
+			return result;
+		}
+	}
+
+	///////////////////////////////////////
+
+	template <class Float>
+	inline constexpr BasicPerlinNoise<Float>::BasicPerlinNoise() noexcept
+		: m_permutation{ 151,160,137,91,90,15,
+				131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
+				190, 6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,
+				88,237,149,56,87,174,20,125,136,171,168, 68,175,74,165,71,134,139,48,27,166,
+				77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,41,55,46,245,40,244,
+				102,143,54, 65,25,63,161, 1,216,80,73,209,76,132,187,208, 89,18,169,200,196,
+				135,130,116,188,159,86,164,100,109,198,173,186, 3,64,52,217,226,250,124,123,
+				5,202,38,147,118,126,255,82,85,212,207,206,59,227,47,16,58,17,182,189,28,42,
+				223,183,170,213,119,248,152, 2,44,154,163, 70,221,153,101,155,167, 43,172,9,
+				129,22,39,253, 19,98,108,110,79,113,224,232,178,185, 112,104,218,246,97,228,
+				251,34,242,193,238,210,144,12,191,179,162,241, 81,51,145,235,249,14,239,107,
+				49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,127, 4,150,254,
+				138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180 } {}
+
+	template <class Float>
+	inline BasicPerlinNoise<Float>::BasicPerlinNoise(const seed_type seed)
+	{
+		reseed(seed);
+	}
+
+	template <class Float>
+	SIVPERLIN_CONCEPT_URBG_
+	inline BasicPerlinNoise<Float>::BasicPerlinNoise(URBG&& urbg)
+	{
+		reseed(std::forward<URBG>(urbg));
+	}
+
+	///////////////////////////////////////
+
+	template <class Float>
+	inline void BasicPerlinNoise<Float>::reseed(const seed_type seed)
+	{
+		reseed(default_random_engine{ seed });
+	}
+
+	template <class Float>
+	SIVPERLIN_CONCEPT_URBG_
+	inline void BasicPerlinNoise<Float>::reseed(URBG&& urbg)
+	{
+		std::iota(m_permutation.begin(), m_permutation.end(), uint8_t{ 0 });
+
+		perlin_detail::Shuffle(m_permutation.begin(), m_permutation.end(), std::forward<URBG>(urbg));
+	}
+
+	///////////////////////////////////////
+
+	template <class Float>
+	inline constexpr const typename BasicPerlinNoise<Float>::state_type& BasicPerlinNoise<Float>::serialize() const noexcept
+	{
+		return m_permutation;
+	}
+
+	template <class Float>
+	inline constexpr void BasicPerlinNoise<Float>::deserialize(const state_type& state) noexcept
+	{
+		m_permutation = state;
+	}
+
+	///////////////////////////////////////
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::noise1D(const value_type x) const noexcept
+	{
+		return noise3D(x,
+			static_cast<value_type>(SIVPERLIN_DEFAULT_Y),
+			static_cast<value_type>(SIVPERLIN_DEFAULT_Z));
+	}
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::noise2D(const value_type x, const value_type y) const noexcept
+	{
+		return noise3D(x,
+			y,
+			static_cast<value_type>(SIVPERLIN_DEFAULT_Z));
+	}
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::noise3D(const value_type x, const value_type y, const value_type z) const noexcept
+	{
+		const value_type _x = std::floor(x);
+		const value_type _y = std::floor(y);
+		const value_type _z = std::floor(z);
+
+		const std::int32_t ix = static_cast<std::int32_t>(_x) & 255;
+		const std::int32_t iy = static_cast<std::int32_t>(_y) & 255;
+		const std::int32_t iz = static_cast<std::int32_t>(_z) & 255;
+
+		const value_type fx = (x - _x);
+		const value_type fy = (y - _y);
+		const value_type fz = (z - _z);
+
+		const value_type u = perlin_detail::Fade(fx);
+		const value_type v = perlin_detail::Fade(fy);
+		const value_type w = perlin_detail::Fade(fz);
+
+		const std::uint8_t A = (m_permutation[ix & 255] + iy) & 255;
+		const std::uint8_t B = (m_permutation[(ix + 1) & 255] + iy) & 255;
+
+		const std::uint8_t AA = (m_permutation[A] + iz) & 255;
+		const std::uint8_t AB = (m_permutation[(A + 1) & 255] + iz) & 255;
+
+		const std::uint8_t BA = (m_permutation[B] + iz) & 255;
+		const std::uint8_t BB = (m_permutation[(B + 1) & 255] + iz) & 255;
+
+		const value_type p0 = perlin_detail::Grad(m_permutation[AA], fx, fy, fz);
+		const value_type p1 = perlin_detail::Grad(m_permutation[BA], fx - 1, fy, fz);
+		const value_type p2 = perlin_detail::Grad(m_permutation[AB], fx, fy - 1, fz);
+		const value_type p3 = perlin_detail::Grad(m_permutation[BB], fx - 1, fy - 1, fz);
+		const value_type p4 = perlin_detail::Grad(m_permutation[(AA + 1) & 255], fx, fy, fz - 1);
+		const value_type p5 = perlin_detail::Grad(m_permutation[(BA + 1) & 255], fx - 1, fy, fz - 1);
+		const value_type p6 = perlin_detail::Grad(m_permutation[(AB + 1) & 255], fx, fy - 1, fz - 1);
+		const value_type p7 = perlin_detail::Grad(m_permutation[(BB + 1) & 255], fx - 1, fy - 1, fz - 1);
+
+		const value_type q0 = perlin_detail::Lerp(p0, p1, u);
+		const value_type q1 = perlin_detail::Lerp(p2, p3, u);
+		const value_type q2 = perlin_detail::Lerp(p4, p5, u);
+		const value_type q3 = perlin_detail::Lerp(p6, p7, u);
+
+		const value_type r0 = perlin_detail::Lerp(q0, q1, v);
+		const value_type r1 = perlin_detail::Lerp(q2, q3, v);
+
+		return perlin_detail::Lerp(r0, r1, w);
+	}
+
+	///////////////////////////////////////
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::noise1D_01(const value_type x) const noexcept
+	{
+		return perlin_detail::Remap_01(noise1D(x));
+	}
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::noise2D_01(const value_type x, const value_type y) const noexcept
+	{
+		return perlin_detail::Remap_01(noise2D(x, y));
+	}
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::noise3D_01(const value_type x, const value_type y, const value_type z) const noexcept
+	{
+		return perlin_detail::Remap_01(noise3D(x, y, z));
+	}
+
+	///////////////////////////////////////
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::octave1D(const value_type x, const std::int32_t octaves, const value_type persistence) const noexcept
+	{
+		return perlin_detail::Octave1D(*this, x, octaves, persistence);
+	}
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::octave2D(const value_type x, const value_type y, const std::int32_t octaves, const value_type persistence) const noexcept
+	{
+		return perlin_detail::Octave2D(*this, x, y, octaves, persistence);
+	}
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::octave3D(const value_type x, const value_type y, const value_type z, const std::int32_t octaves, const value_type persistence) const noexcept
+	{
+		return perlin_detail::Octave3D(*this, x, y, z, octaves, persistence);
+	}
+
+	///////////////////////////////////////
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::octave1D_11(const value_type x, const std::int32_t octaves, const value_type persistence) const noexcept
+	{
+		return perlin_detail::Clamp_11(octave1D(x, octaves, persistence));
+	}
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::octave2D_11(const value_type x, const value_type y, const std::int32_t octaves, const value_type persistence) const noexcept
+	{
+		return perlin_detail::Clamp_11(octave2D(x, y, octaves, persistence));
+	}
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::octave3D_11(const value_type x, const value_type y, const value_type z, const std::int32_t octaves, const value_type persistence) const noexcept
+	{
+		return perlin_detail::Clamp_11(octave3D(x, y, z, octaves, persistence));
+	}
+
+	///////////////////////////////////////
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::octave1D_01(const value_type x, const std::int32_t octaves, const value_type persistence) const noexcept
+	{
+		return perlin_detail::RemapClamp_01(octave1D(x, octaves, persistence));
+	}
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::octave2D_01(const value_type x, const value_type y, const std::int32_t octaves, const value_type persistence) const noexcept
+	{
+		return perlin_detail::RemapClamp_01(octave2D(x, y, octaves, persistence));
+	}
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::octave3D_01(const value_type x, const value_type y, const value_type z, const std::int32_t octaves, const value_type persistence) const noexcept
+	{
+		return perlin_detail::RemapClamp_01(octave3D(x, y, z, octaves, persistence));
+	}
+
+	///////////////////////////////////////
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::normalizedOctave1D(const value_type x, const std::int32_t octaves, const value_type persistence) const noexcept
+	{
+		return (octave1D(x, octaves, persistence) / perlin_detail::MaxAmplitude(octaves, persistence));
+	}
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::normalizedOctave2D(const value_type x, const value_type y, const std::int32_t octaves, const value_type persistence) const noexcept
+	{
+		return (octave2D(x, y, octaves, persistence) / perlin_detail::MaxAmplitude(octaves, persistence));
+	}
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::normalizedOctave3D(const value_type x, const value_type y, const value_type z, const std::int32_t octaves, const value_type persistence) const noexcept
+	{
+		return (octave3D(x, y, z, octaves, persistence) / perlin_detail::MaxAmplitude(octaves, persistence));
+	}
+
+	///////////////////////////////////////
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::normalizedOctave1D_01(const value_type x, const std::int32_t octaves, const value_type persistence) const noexcept
+	{
+		return perlin_detail::Remap_01(normalizedOctave1D(x, octaves, persistence));
+	}
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::normalizedOctave2D_01(const value_type x, const value_type y, const std::int32_t octaves, const value_type persistence) const noexcept
+	{
+		return perlin_detail::Remap_01(normalizedOctave2D(x, y, octaves, persistence));
+	}
+
+	template <class Float>
+	inline typename BasicPerlinNoise<Float>::value_type BasicPerlinNoise<Float>::normalizedOctave3D_01(const value_type x, const value_type y, const value_type z, const std::int32_t octaves, const value_type persistence) const noexcept
+	{
+		return perlin_detail::Remap_01(normalizedOctave3D(x, y, z, octaves, persistence));
+	}
 }
 
-#ifdef DB_PERLIN_IMPL
-
-/*
- * The implementation was based on this article:
- * - https://flafla2.github.io/2014/08/09/perlinnoise.html
- *
- * A reference implementation in Java by Ken Perlin, the author of the algorithm:
- * - https://mrl.cs.nyu.edu/~perlin/noise/
- *
- * Here are some alternative implementations that were used as inspirations:
- * - https://github.com/nothings/stb/blob/08e89524f693651819c4de2a29685b36301a08b1/stb_perlin.h [removed from upstream]
- * - https://github.com/stegu/perlin-noise/blob/master/src/noise1234.c
- */
-
-namespace db {
-    // Permutation table, the second half is a mirror of the first half.
-    static unsigned char const p[512] = {
-        151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142,
-        8, 99, 37, 240, 21, 10, 23, 190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203,
-        117, 35, 11, 32, 57, 177, 33, 88, 237, 149, 56, 87, 174, 20, 125, 136, 171, 168, 68, 175, 74,
-        165, 71, 134, 139, 48, 27, 166, 77, 146, 158, 231, 83, 111, 229, 122, 60, 211, 133, 230, 220,
-        105, 92, 41, 55, 46, 245, 40, 244, 102, 143, 54, 65, 25, 63, 161, 1, 216, 80, 73, 209, 76, 132,
-        187, 208, 89, 18, 169, 200, 196, 135, 130, 116, 188, 159, 86, 164, 100, 109, 198, 173, 186,
-        3, 64, 52, 217, 226, 250, 124, 123, 5, 202, 38, 147, 118, 126, 255, 82, 85, 212, 207, 206, 59,
-        227, 47, 16, 58, 17, 182, 189, 28, 42, 223, 183, 170, 213, 119, 248, 152, 2, 44, 154, 163, 70,
-        221, 153, 101, 155, 167, 43, 172, 9, 129, 22, 39, 253, 19, 98, 108, 110, 79, 113, 224, 232, 178,
-        185, 112, 104, 218, 246, 97, 228, 251, 34, 242, 193, 238, 210, 144, 12, 191, 179, 162, 241,
-        81, 51, 145, 235, 249, 14, 239, 107, 49, 192, 214, 31, 181, 199, 106, 157, 184, 84, 204, 176,
-        115, 121, 50, 45, 127, 4, 150, 254, 138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195,
-        78, 66, 215, 61, 156, 180,
-
-        151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142,
-        8, 99, 37, 240, 21, 10, 23, 190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203,
-        117, 35, 11, 32, 57, 177, 33, 88, 237, 149, 56, 87, 174, 20, 125, 136, 171, 168, 68, 175, 74,
-        165, 71, 134, 139, 48, 27, 166, 77, 146, 158, 231, 83, 111, 229, 122, 60, 211, 133, 230, 220,
-        105, 92, 41, 55, 46, 245, 40, 244, 102, 143, 54, 65, 25, 63, 161, 1, 216, 80, 73, 209, 76, 132,
-        187, 208, 89, 18, 169, 200, 196, 135, 130, 116, 188, 159, 86, 164, 100, 109, 198, 173, 186,
-        3, 64, 52, 217, 226, 250, 124, 123, 5, 202, 38, 147, 118, 126, 255, 82, 85, 212, 207, 206, 59,
-        227, 47, 16, 58, 17, 182, 189, 28, 42, 223, 183, 170, 213, 119, 248, 152, 2, 44, 154, 163, 70,
-        221, 153, 101, 155, 167, 43, 172, 9, 129, 22, 39, 253, 19, 98, 108, 110, 79, 113, 224, 232, 178,
-        185, 112, 104, 218, 246, 97, 228, 251, 34, 242, 193, 238, 210, 144, 12, 191, 179, 162, 241,
-        81, 51, 145, 235, 249, 14, 239, 107, 49, 192, 214, 31, 181, 199, 106, 157, 184, 84, 204, 176,
-        115, 121, 50, 45, 127, 4, 150, 254, 138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195,
-        78, 66, 215, 61, 156, 180,
-    };
-
-    template<typename T>
-    static inline auto lerp(T a, T b, T t) -> T {
-        return a + t * (b - a);
-    }
-
-    template<typename T>
-    static inline auto floor(T x) -> int {
-        auto const xi = int(x);
-        return (x < T(xi)) ? xi - 1 : xi;
-    }
-
-    template<typename T>
-    static inline auto fade(T t) -> T {
-        return t * t * t * (t * (t * T(6.0) - T(15.0)) + T(10.0));
-    }
-
-    template<typename T>
-    static inline auto dot_grad(int hash, T xf) -> T {
-        // In 1D case, the gradient may be either 1 or -1
-        // The distance vector is the input offset (relative to the smallest bound)
-        return (hash & 0x1) ? xf : -xf;
-    }
-
-    template<typename T>
-    static inline auto dot_grad(int hash, T xf, T yf) -> T {
-        // In 2D case, the gradient may be any of 8 direction vectors pointing to the
-        // edges of a unit-square. The distance vector is the input offset (relative to
-        // the smallest bound)
-        switch (hash & 0x7) {
-            case 0x0: return  xf + yf;
-            case 0x1: return  xf;
-            case 0x2: return  xf - yf;
-            case 0x3: return -yf;
-            case 0x4: return -xf - yf;
-            case 0x5: return -xf;
-            case 0x6: return -xf + yf;
-            case 0x7: return  yf;
-            default:  return  T(0.0);
-        }
-    }
-
-    template<typename T>
-    static inline auto dot_grad(int hash, T xf, T yf, T zf) -> T {
-        // In 3D case, the gradient may be any of 12 direction vectors pointing to the edges
-        // of a unit-cube (rounded to 16 with duplications). The distance vector is the input
-        // offset (relative to the smallest bound)
-        switch (hash & 0xF) {
-            case 0x0: return  xf + yf;
-            case 0x1: return -xf + yf;
-            case 0x2: return  xf - yf;
-            case 0x3: return -xf - yf;
-            case 0x4: return  xf + zf;
-            case 0x5: return -xf + zf;
-            case 0x6: return  xf - zf;
-            case 0x7: return -xf - zf;
-            case 0x8: return  yf + zf;
-            case 0x9: return -yf + zf;
-            case 0xA: return  yf - zf;
-            case 0xB: return -yf - zf;
-            case 0xC: return  yf + xf;
-            case 0xD: return -yf + zf;
-            case 0xE: return  yf - xf;
-            case 0xF: return -yf - zf;
-            default:  return  T(0.0);
-        }
-    }
-
-    template<typename T>
-    auto perlin(T x) -> T {
-        // Left coordinate of the unit-line that contains the input
-        int const xi0 = floor(x);
-
-        // Input location in the unit-line
-        T const xf0 = x - T(xi0);
-        T const xf1 = xf0 - T(1.0);
-
-        // Wrap to range 0-255
-        int const xi = xi0 & 0xFF;
-
-        // Apply the fade function to the location
-        T const u = fade(xf0);
-
-        // Generate hash values for each point of the unit-line
-        int const h0 = p[xi + 0];
-        int const h1 = p[xi + 1];
-
-        // Linearly interpolate between dot products of each gradient with its distance to the input location
-        return lerp(dot_grad(h0, xf0), dot_grad(h1, xf1), u);
-    }
-
-    template<typename T>
-    auto perlin(T x, T y) -> T {
-        // Top-left coordinates of the unit-square
-        int const xi0 = floor(x) & 0xFF;
-        int const yi0 = floor(y) & 0xFF;
-
-        // Input location in the unit-square
-        T const xf0 = x - T(xi0);
-        T const yf0 = y - T(yi0);
-        T const xf1 = xf0 - T(1.0);
-        T const yf1 = yf0 - T(1.0);
-
-        // Wrap to range 0-255
-        int const xi = xi0 & 0xFF;
-        int const yi = yi0 & 0xFF;
-
-        // Apply the fade function to the location
-        T const u = fade(xf0);
-        T const v = fade(yf0);
-
-        // Generate hash values for each point of the unit-square
-        int const h00 = p[p[xi + 0] + yi + 0];
-        int const h01 = p[p[xi + 0] + yi + 1];
-        int const h10 = p[p[xi + 1] + yi + 0];
-        int const h11 = p[p[xi + 1] + yi + 1];
-
-        // Linearly interpolate between dot products of each gradient with its distance to the input location
-        T const x1 = lerp(dot_grad(h00, xf0, yf0), dot_grad(h10, xf1, yf0), u);
-        T const x2 = lerp(dot_grad(h01, xf0, yf1), dot_grad(h11, xf1, yf1), u);
-        return lerp(x1, x2, v);
-    }
-
-    template<typename T>
-    auto perlin(T x, T y, T z) -> T {
-        // Top-left coordinates of the unit-cube
-        int const xi0 = floor(x);
-        int const yi0 = floor(y);
-        int const zi0 = floor(z);
-
-        // Input location in the unit-cube
-        T const xf0 = x - T(xi0);
-        T const yf0 = y - T(yi0);
-        T const zf0 = z - T(zi0);
-        T const xf1 = xf0 - T(1.0);
-        T const yf1 = yf0 - T(1.0);
-        T const zf1 = zf0 - T(1.0);
-
-        // Wrap to range 0-255
-        int const xi = xi0 & 0xFF;
-        int const yi = yi0 & 0xFF;
-        int const zi = zi0 & 0xFF;
-
-        // Apply the fade function to the location
-        T const u = fade(xf0);
-        T const v = fade(yf0);
-        T const w = fade(zf0);
-
-        // Generate hash values for each point of the unit-cube
-        int const h000 = p[p[p[xi + 0] + yi + 0] + zi + 0];
-        int const h001 = p[p[p[xi + 0] + yi + 0] + zi + 1];
-        int const h010 = p[p[p[xi + 0] + yi + 1] + zi + 0];
-        int const h011 = p[p[p[xi + 0] + yi + 1] + zi + 1];
-        int const h100 = p[p[p[xi + 1] + yi + 0] + zi + 0];
-        int const h101 = p[p[p[xi + 1] + yi + 0] + zi + 1];
-        int const h110 = p[p[p[xi + 1] + yi + 1] + zi + 0];
-        int const h111 = p[p[p[xi + 1] + yi + 1] + zi + 1];
-
-        // Linearly interpolate between dot products of each gradient with its distance to the input location
-        T const x11 = lerp(dot_grad(h000, xf0, yf0, zf0), dot_grad(h100, xf1, yf0, zf0), u);
-        T const x12 = lerp(dot_grad(h010, xf0, yf1, zf0), dot_grad(h110, xf1, yf1, zf0), u);
-        T const x21 = lerp(dot_grad(h001, xf0, yf0, zf1), dot_grad(h101, xf1, yf0, zf1), u);
-        T const x22 = lerp(dot_grad(h011, xf0, yf1, zf1), dot_grad(h111, xf1, yf1, zf1), u);
-
-        T const y1 = lerp(x11, x12, v);
-        T const y2 = lerp(x21, x22, v);
-
-        return lerp(y1, y2, w);
-    }
-}
-
-template auto db::perlin<float>(float x) -> float;
-template auto db::perlin<float>(float x, float y) -> float;
-template auto db::perlin<float>(float x, float y, float z) -> float;
-
-template auto db::perlin<double>(double x) -> double;
-template auto db::perlin<double>(double x, double y) -> double;
-template auto db::perlin<double>(double x, double y, double z) -> double;
-
-#endif // DB_PERLIN_IMPL
-
-#endif // DB_PERLIN_HPP
-
-/*
-MIT License
-Copyright (c) 2020-2022 Daniils Buts
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
+# undef SIVPERLIN_NODISCARD_CXX20
+# undef SIVPERLIN_CONCEPT_URBG
+# undef SIVPERLIN_CONCEPT_URBG_
