@@ -67,57 +67,60 @@ int main()
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
-        -0.5f, -0.5f,  0.0f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.0f,  1.0f, 0.0f, 
-         0.5f,  0.5f,  0.0f,  1.0f, 1.0f, 
-         0.5f,  0.5f,  0.0f,  1.0f, 1.0f, 
-        -0.5f, -0.5f,  0.0f,  0.0f, 0.0f, 
-        -0.5f,  0.5f,  0.0f,  0.0f, 1.0f, 
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-         0.0f, -0.5f,  -0.5f,  0.0f, 0.0f, 
-         0.0f, -0.5f,  0.5f,  1.0f, 0.0f, 
-         0.0f,  0.5f,   0.5f,  1.0f, 1.0f, 
-         0.0f,  0.5f,  0.5f, 1.0f, 1.0f, 
-         0.0f, -0.5f,  -0.5f,  0.0f, 0.0f,
-         0.0f,  0.5f,  -0.5f,  0.0f, 1.0f, 
-          0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,// top right - back
-          0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,// bottom right - back
-         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,// bottom left - back
-         -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f,// top left - back
-          0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,// top right - front
-          0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,// bottom right - front
-         -0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,// bottom left - front
-         -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f// top left - front
-    };
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
 
-    uint indices[] = {  // note that we start from 0!
-    0, 1, 3,   // back
-    1, 2, 3,   
-    2, 3, 6,   //left side
-    3, 6, 7,
-    0, 1, 5,   //right side
-    0, 4, 5,
-    4, 5, 7,   // front
-    5, 6, 7,
-    0, 4, 7,   //top
-    0, 3, 7,
-    1, 2, 6,   //bottom
-    1, 5, 6
-    }; 
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+};
 
 
-    uint VBO, VAO, EBO;
+
+    uint VBO, VAO;
     glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &EBO);
+
     glGenBuffers(1, &VBO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -158,7 +161,7 @@ int main()
     // load image, create texture and generate mipmaps
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-    unsigned char *data = stbi_load("textures/grass.png", &width, &height, &nrChannels, 4);
+    unsigned char *data = stbi_load("textures/azalea_leaves.png", &width, &height, &nrChannels, 4);
     if (data)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -196,7 +199,7 @@ int main()
         glm::mat4 model         = glm::mat4(1.0f);
         view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -4.0f));
         projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        model = glm::rotate(model, 0.25f, glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
         unsigned int viewLoc  = glGetUniformLocation(ourShader.ID, "view");
         
@@ -209,9 +212,7 @@ int main()
 
         // render the triangle
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0,12);
-       
-        glDrawElements(GL_TRIANGLES, sizeof(indices)/4, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
         
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
