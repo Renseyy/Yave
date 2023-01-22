@@ -52,7 +52,9 @@ int main()
         std::cout << "GLAD sie wykruszyl, biedaczysko..." << std::endl;
         return -1;
     }
-
+    // Testowanie głębokości
+    // -----------------------------
+    glEnable(GL_DEPTH_TEST);
     // build and compile our shader program
     // ------------------------------------
     Shader ourShader("shaders/base.vertex.glsl", "shaders/base.fragment.glsl"); // you can name your shader files however you like
@@ -60,10 +62,47 @@ int main()
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
-        // positions         // colors
-         0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  // bottom left
-         0.0f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f   // top 
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f
     };
 
     uint VBO, VAO;
@@ -100,47 +139,35 @@ int main()
         // render
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //takie szare tuo
-        glClear(GL_COLOR_BUFFER_BIT); //wciepaj
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
 
         //pozmieniajmy kolorki
         float czas = glfwGetTime();
         
         float val=sin(czas)/2.0f + 0.5f;
-        //std::cout<<val - 0.5f <<std::endl;
-        vertices[7*i+3]=val;
-        if(czas-oldczas>=2*M_PI){ //jeśli zrobiło obrót i zgasło
-            i++;
-            oldczas=czas;
-        }
-        if(i>=3)
-            i=0;
-
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW); //przeładujmy
-        // Pass time to 
-        //glUniform1f(glGetUniformLocation(program, "pauto"), pauto);
-
-
         ourShader.use();
       
         
         glm::mat4 view          = glm::mat4(1.0f);
         glm::mat4 projection    = glm::mat4(1.0f);
-        
+        glm::mat4 model         = glm::mat4(1.0f);
         view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -4.0f));
         projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-       
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 0.1f, 0.0f));
+
         unsigned int viewLoc  = glGetUniformLocation(ourShader.ID, "view");
         
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
         
         ourShader.setMat4("projection", projection);
+        ourShader.setMat4("model", model);
         unsigned int addonLoc = glGetUniformLocation(ourShader.ID, "addon");
         glUniform1f(addonLoc,val);
 
         // render the triangle
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
        
         
 

@@ -11,8 +11,8 @@ uniform float addon;
 
 void main()
 {
-    float tmp = (addon - 0.5f) * 2;
+    float tmp = (addon - 0.5f) / 2;
     float tmpY = aPos.y + 0.5f;
-    gl_Position = projection * view  * vec4(aPos.x + tmp * tmpY ,aPos.y, 1.0f);
+    gl_Position = projection * view  * model* vec4(aPos.x + tmp * tmpY ,aPos.y, aPos.z + tmp * tmpY, 1.0f);
     ourColor = aColor;
 }
