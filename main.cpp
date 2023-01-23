@@ -198,14 +198,14 @@ int main()
     });
     
     //init camera
-    cam0.position=glm::vec3(0.0f, 0.0f, -4.0f);
-    cam0.v[0]=0.1f;
-    cam0.v[1]=0.1f;
-    cam0.v[2]=0.1f;
-    cam0.rotation_v[0]=glm::radians(0.1f);
-    cam0.rotation_v[1]=glm::radians(0.1f);
+    cam0.position=glm::vec3(0.0f, 0.0f, -4.0f); //starting position
+    cam0.v[0]=0.05f; //x sensitivity
+    cam0.v[1]=0.05f; //y sensitivity
+    cam0.v[2]=0.05f; //z sensitivity
+    cam0.rotation_v[0]=glm::radians(0.1f); //rotation x-z sensitivity
+    cam0.rotation_v[1]=glm::radians(0.1f); //rotation y sensitivity
 
-    cam0.rotation[0]=0.0f;
+    cam0.rotation[0]=0.0f; //starting rotation
     cam0.rotation[1]=0.0f;
 
     
