@@ -24,6 +24,9 @@
 //	THE SOFTWARE.
 //
 //----------------------------------------------------------------------------------------
+#ifndef NOICE_H
+#define NOICE_H
+
 
 # pragma once
 # include <cstdint>
@@ -657,3 +660,4 @@ namespace siv
 # undef SIVPERLIN_NODISCARD_CXX20
 # undef SIVPERLIN_CONCEPT_URBG
 # undef SIVPERLIN_CONCEPT_URBG_
+#endif

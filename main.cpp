@@ -1,34 +1,46 @@
+/*
+YAVE - by MK and KK
+all rights reserved
+*/
 
 
-#include <glad/glad.h>
+//basic libs
+#include <iostream>
+#include <string>
 #include <cmath>
-#include <GLFW/glfw3.h>
 
+//glad
+#include <glad/glad.h>
+//glfw
+#include <GLFW/glfw3.h>
+//glm
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
+//custom libs
+#include "lib/global_objects.h"
 #include "lib/Shader.h"
 #include "lib/Noise.h"
-#include <iostream>
+#include "lib/YAVE_input.h"
+
+//stb - textures
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 typedef unsigned int uint;
 
+//functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
+
 
 // settings
 const uint SCR_WIDTH = 800;
 const uint SCR_HEIGHT = 600;
-struct Block{
-    glm::vec3 position;
-    int texture;
-    float windness;
 
+//global varialibes
+Camera cam0;
 
-};
 int main()
 {
     // glfw: initialize and configure
@@ -145,10 +157,6 @@ int main()
 
 
     unsigned char i=0; //nie marnujmy pamięci ;)
-    // render loop
-    // -----------
-    float oldczas=glfwGetTime()-M_PI/2.0f;
-    uint calc = 0;
 
     //Perlin noise 
     const siv::PerlinNoise::seed_type seed = 123456u;
@@ -181,6 +189,26 @@ int main()
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
+    
+    //init camera
+    cam0.position=glm::vec3(0.0f, 0.0f, -4.0f);
+    cam0.v_x=0.1f;
+    cam0.v_y=0.1f;
+    cam0.v_z=0.1f;
+
+
+    //keyboard
+    YAVE_keys_init();
+    glfwSetKeyCallback(window, key_callback);
+    
+
+
+    // render loop
+    // -----------
+    float oldczas=glfwGetTime()-M_PI/2.0f;
+    uint calc = 0;
+
+    
     while (!glfwWindowShouldClose(window))
     {
         // input
@@ -196,16 +224,20 @@ int main()
         //pozmieniajmy kolorki
         float czas = glfwGetTime();
         
+        //keyboard
+            YAVE_exec_keys();
+
+        //render shaders
         float val=sin(czas)/2.0f + 0.5f;
         ourShader.use();
       
-        
         glm::mat4 view          = glm::mat4(1.0f);
         glm::mat4 projection    = glm::mat4(1.0f);
         glm::mat4 model         = glm::mat4(1.0f);
-        view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -4.0f));
+        view  = glm::translate(view, cam0.position);
         projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
+        
         unsigned int viewLoc  = glGetUniformLocation(ourShader.ID, "view");
         
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
@@ -261,4 +293,5 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
+
 
