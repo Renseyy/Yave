@@ -20,6 +20,11 @@ sudo dnf install glfw-devel
 sudo dnf install glm-devel
 ```
 
+- stb-image.h
+```
+git clone https://github.com/nothings/stb.git
+sudo cp stb/stb_image.h /usr/local/include/
+```
 
 - możliwe że potrzebne też do glfw3 ( fedora 37 instaluje je automatycznie )
 ```
