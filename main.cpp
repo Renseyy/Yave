@@ -192,11 +192,17 @@ int main()
     
     //init camera
     cam0.position=glm::vec3(0.0f, 0.0f, -4.0f);
-    cam0.v_x=0.1f;
-    cam0.v_y=0.1f;
-    cam0.v_z=0.1f;
+    cam0.v[0]=0.1f;
+    cam0.v[1]=0.1f;
+    cam0.v[2]=0.1f;
+    cam0.rotation_v[0]=glm::radians(1.0f);
+    cam0.rotation_v[1]=glm::radians(1.0f);
 
+    cam0.rotation[0]=0.0f;
+    cam0.rotation[1]=0.0f;
 
+    
+    
     //keyboard
     YAVE_keys_init();
     glfwSetKeyCallback(window, key_callback);
@@ -231,13 +237,21 @@ int main()
         float val=sin(czas)/2.0f + 0.5f;
         ourShader.use();
       
+      //set view
+      //camera varialibes
+        glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f); 
+        //up.x+=cam0.position.x;
+        //up.z+=cam0.position.z;
+        
         glm::mat4 view          = glm::mat4(1.0f);
         glm::mat4 projection    = glm::mat4(1.0f);
         glm::mat4 model         = glm::mat4(1.0f);
-        view  = glm::translate(view, cam0.position);
+        
+        view  = glm::rotate(view, cam0.rotation[0], up);
+        view  = glm::rotate(view, cam0.rotation[1], glm::cross(cam0.position,up));
         projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
-        
+        view  = glm::translate(view, cam0.position);
         unsigned int viewLoc  = glGetUniformLocation(ourShader.ID, "view");
         
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);

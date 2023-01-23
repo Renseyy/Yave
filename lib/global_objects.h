@@ -10,10 +10,9 @@ struct Block{
 
 struct Camera{
     glm::vec3 position;
-    glm::vec3 rotation;
-    float v_x; //x velocity
-    float v_y; //y velocity
-    float v_z; //z velocity
+    float rotation[2]; //rotation
+    float v[3]; //velocity
+    float rotation_v[2]; //rotation velocity
 };
 
 extern Camera cam0;

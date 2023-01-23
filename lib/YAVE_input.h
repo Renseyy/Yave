@@ -12,10 +12,10 @@
 
 #include "global_objects.h"
 
-#define YAVE_KEY_MAPPED 4 //number of mapped keys
+#define YAVE_KEY_MAPPED 8 //number of mapped keys
 
 struct YAVE_key{
-char binding;
+uint binding;
 u_char status;
 u_char pressed;
 };
@@ -33,7 +33,11 @@ enum { //kiedy edytujesz to, to pamietaj aby zmienić YAVE_KEY_MAPPED i w YAVE_k
     YAVE_KEY_UP = 0,
     YAVE_KEY_DOWN,
     YAVE_KEY_RIGHT,
-    YAVE_KEY_LEFT
+    YAVE_KEY_LEFT,
+    YAVE_ARROW_UP,
+    YAVE_ARROW_DOWN,
+    YAVE_ARROW_RIGHT,
+    YAVE_ARROW_LEFT
 };
 
 
