@@ -8,7 +8,15 @@ struct Block{
     uint type = 0;
     float windness = 0;
     uint textureID = 0;
-    uint textureIDs[6] = {0,0,0,0,0,0};
+    uint textureIDs[6] = {
+        0,  //Tył
+        0,  // Przód
+        0,  // Lewo
+        0,  // Prawo
+        0,  // Dół
+        0   //Góra
+    };
+
 
 };
 
