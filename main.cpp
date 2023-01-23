@@ -27,7 +27,10 @@ all rights reserved
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-
+#include "lib/imgui/imgui.h"
+#include "lib/imgui/imgui_impl_opengl3_loader.h"
+#include "lib/imgui/imgui_impl_opengl3.h"
+#include "lib/imgui/imgui_impl_glfw.h"
 typedef unsigned int uint;
 
 //functions
