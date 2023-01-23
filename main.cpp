@@ -137,7 +137,7 @@ int main()
             rotation: 1,
             type:1,
             textureIDs: {
-                5,5,5,5,5,6
+                5,5,5,5,3,6
             }
         },
         {
