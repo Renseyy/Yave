@@ -2,13 +2,15 @@
 
 YAVE_key YAVE_keys[YAVE_KEY_MAPPED];
 
+//global varialibes
 float lastX , lastY;
 float flash;
+bool firstMouse;
+
 
 void YAVE_keys_init(void){
     flash=3.0f;
-    lastX = 400;
-    lastY = 300;
+    firstMouse=true;
     //********************bindings
     YAVE_keys[YAVE_KEY_UP].binding      = GLFW_KEY_W;
     YAVE_keys[YAVE_KEY_DOWN].binding    = GLFW_KEY_S;
@@ -68,6 +70,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos){
+
+    if (firstMouse) //ustaw poczatkowe parametry
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
     float dx = xpos - lastX;
     float dy = lastY - ypos; 
     lastX = xpos;

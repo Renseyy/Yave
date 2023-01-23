@@ -15,6 +15,8 @@
 #define YAVE_KEY_MAPPED 7 //number of mapped keys
 
 extern float flash;
+extern bool firstMouse;
+
 
 struct YAVE_key{
 uint binding;
