@@ -4,8 +4,12 @@
 //global universal structures
 struct Block{
     glm::vec3 position;
-    int texture;
-    float windness;
+    uint rotation = 0;
+    uint type = 0;
+    float windness = 0;
+    uint textureID = 0;
+    uint textureIDs[6] = {0,0,0,0,0,0};
+
 };
 
 struct Camera{

@@ -40,15 +40,7 @@ const uint WIDTH = 800;
 const uint HEIGHT = 600;
 const float ASPECT = float(WIDTH)/HEIGHT;
 Camera cam0;
-struct Block{
-    glm::vec3 position;
-    uint rotation = 0;
-    uint type = 0;
-    float windness = 0;
-    uint textureID = 0;
-    uint textureIDs[6] = {0,0,0,0,0,0};
 
-};
 int main()
 {
     // glfw: initialize and configure
@@ -256,12 +248,12 @@ int main()
         //up.z+=cam0.position.z;
         
         glm::mat4 view          = glm::mat4(1.0f);
-        projection    = glm::mat4(1.0f);
+        glm::mat4 projection    = glm::mat4(1.0f);
         glm::mat4 model         = glm::mat4(1.0f);
         
         view  = glm::rotate(view, cam0.rotation[0], up);
         view  = glm::rotate(view, cam0.rotation[1], glm::cross(cam0.position,up));
-        projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 
         view  = glm::translate(view, cam0.position);
         unsigned int viewLoc  = glGetUniformLocation(ourShader.ID, "view");
