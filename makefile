@@ -1,6 +1,6 @@
 all: build chmod
 build:
-	g++ -std=c++20 main.cpp -lglad -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl -o yave
+	g++ -std=c++20 main.cpp src/YAVE_input.cpp -lglad -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl -o yave
 chmod:
 	@chmod +x yave
 _run:

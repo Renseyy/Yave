@@ -1,30 +1,45 @@
+/*
+YAVE - by MAKOUS and KK
+all rights reserved
+*/
 
 
-#include <glad/glad.h>
+//basic libs
+#include <iostream>
+#include <string>
 #include <cmath>
-#include <GLFW/glfw3.h>
 
+//glad
+#include <glad/glad.h>
+//glfw
+#include <GLFW/glfw3.h>
+//glm
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
+//custom libs
+#include "lib/global_objects.h"
 #include "lib/Shader.h"
 #include "lib/Noise.h"
+#include "lib/YAVE_input.h"
+//stb - textures
 #include "lib/TextureManager.h"
-#include <iostream>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 typedef unsigned int uint;
 
+//functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
+
 
 // settings
 const uint WIDTH = 800;
 const uint HEIGHT = 600;
 const float ASPECT = float(WIDTH)/HEIGHT;
-
+Camera cam0;
 struct Block{
     glm::vec3 position;
     uint rotation = 0;
@@ -34,7 +49,6 @@ struct Block{
     uint textureIDs[6] = {0,0,0,0,0,0};
 
 };
-glm::mat4 projection;
 int main()
 {
     // glfw: initialize and configure
@@ -167,10 +181,6 @@ int main()
 
 
     unsigned char i=0; //nie marnujmy pamięci ;)
-    // render loop
-    // -----------
-    float oldczas=glfwGetTime()-M_PI/2.0f;
-    uint calc = 0;
 
     //Perlin noise 
     const siv::PerlinNoise::seed_type seed = 123456u;
@@ -191,6 +201,32 @@ int main()
         
         
     });
+    
+    //init camera
+    cam0.position=glm::vec3(0.0f, 0.0f, -4.0f);
+    cam0.v[0]=0.1f;
+    cam0.v[1]=0.1f;
+    cam0.v[2]=0.1f;
+    cam0.rotation_v[0]=glm::radians(0.1f);
+    cam0.rotation_v[1]=glm::radians(0.1f);
+
+    cam0.rotation[0]=0.0f;
+    cam0.rotation[1]=0.0f;
+
+    
+    
+    //keyboard
+    YAVE_keys_init();
+    glfwSetKeyCallback(window, key_callback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
+    glfwSetCursorPosCallback(window, mouse_callback);
+
+    // render loop
+    // -----------
+    float oldczas=glfwGetTime()-M_PI/2.0f;
+    uint calc = 0;
+
+    
     while (!glfwWindowShouldClose(window))
     {
         // input
@@ -206,16 +242,28 @@ int main()
         //pozmieniajmy kolorki
         float czas = glfwGetTime();
         
+        //keyboard
+            YAVE_exec_keys();
+
+        //render shaders
         float val=sin(czas)/2.0f + 0.5f;
         ourShader.use();
       
+      //set view
+      //camera varialibes
+        glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f); 
+        //up.x+=cam0.position.x;
+        //up.z+=cam0.position.z;
         
         glm::mat4 view          = glm::mat4(1.0f);
         projection    = glm::mat4(1.0f);
         glm::mat4 model         = glm::mat4(1.0f);
-        view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -4.0f));
-        projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+        
+        view  = glm::rotate(view, cam0.rotation[0], up);
+        view  = glm::rotate(view, cam0.rotation[1], glm::cross(cam0.position,up));
+        projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
+        view  = glm::translate(view, cam0.position);
         unsigned int viewLoc  = glGetUniformLocation(ourShader.ID, "view");
         
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
@@ -283,4 +331,5 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     int left = (width - w) / 2;
     glViewport(left, 0, w, height);
 }
+
 
