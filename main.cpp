@@ -27,10 +27,11 @@ const float ASPECT = float(WIDTH)/HEIGHT;
 
 struct Block{
     glm::vec3 position;
-    int texture;
-    float windness;
-    uint rotation;
+    uint rotation = 0;
+    uint type = 0;
+    float windness = 0;
     uint textureID = 0;
+    uint textureIDs[6] = {0,0,0,0,0,0};
 
 };
 glm::mat4 projection;
@@ -95,12 +96,12 @@ int main()
     -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, // top-left
     -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
     // Left face
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-left
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+    -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left
+    -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+    -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
     // Right face
      0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
      0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
@@ -123,11 +124,22 @@ int main()
     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
     -0.5f,  0.5f,  0.5f,  0.0f, 0.0f  // bottom-left        
 };
-    const uint OBIECT_NUM = 3;
+    const uint OBIECT_NUM = 2;
     Block cubePositions[] = {
-        {{0.0f,-1.5f,0.0f},0,0,2,3},
-        {{0.0f,-0.5f,0.0f},0,0.5},
-        {{0.0f,-0.5f,1.0f},0,0,0,4}
+        {
+            position:{0.0f,-1.0f,0.0f},
+            rotation: 1,
+            type:1,
+            textureIDs: {
+                5,5,5,5,5,6
+            }
+        },
+        {
+            position:{0.0f,0.0f,0.0f},
+            windness:1
+        }
+        
+        
     };
 
 
@@ -172,7 +184,9 @@ int main()
         "textures/leaves.png",
         "textures/sapling.png",
         "textures/dirt.png",
-        "textures/glass.png"
+        "textures/glass.png",
+        "textures/grass_block_side.png",
+         "textures/grass_block_top.png"
 
         
         
@@ -213,14 +227,24 @@ int main()
 
         // render the triangle
         glBindVertexArray(VAO);
-        for(unsigned int i = 0; i < OBIECT_NUM; i++)
+        for(uint i = 0; i < OBIECT_NUM; i++)
         {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i].position);
+            model = glm::rotate(model,glm::radians(45.0f),glm::vec3(0,1,0));
             ourShader.setFloat("windness",cubePositions[i].windness);
             ourShader.setMat4("model", model);
-            glUniform1i(glGetUniformLocation(ourShader.ID, "tex"), cubePositions[i].textureID);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+            if(cubePositions[i].type == 0){
+                glUniform1i(glGetUniformLocation(ourShader.ID, "tex"), cubePositions[i].textureID);
+                glDrawArrays(GL_TRIANGLES, 0, 36);
+            }else{
+                for(uint j = 0; j < 6;j++){
+                    glUniform1i(glGetUniformLocation(ourShader.ID, "tex"), cubePositions[i].textureIDs[j]);
+                    glDrawArrays(GL_TRIANGLES, j*6, 6);
+                }
+            }
+            
+            
         }
         
 
