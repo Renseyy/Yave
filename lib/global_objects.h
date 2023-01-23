@@ -16,5 +16,5 @@ struct Camera{
 };
 
 extern Camera cam0;
-
+extern float lastX , lastY;
 #endif

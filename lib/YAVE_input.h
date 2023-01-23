@@ -12,7 +12,7 @@
 
 #include "global_objects.h"
 
-#define YAVE_KEY_MAPPED 8 //number of mapped keys
+#define YAVE_KEY_MAPPED 4 //number of mapped keys
 
 struct YAVE_key{
 uint binding;
@@ -22,11 +22,11 @@ u_char pressed;
 
 extern YAVE_key YAVE_keys[YAVE_KEY_MAPPED];
 
-
+//functions
 void YAVE_exec_keys(void);
 void YAVE_keys_init(void);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 
 enum { //kiedy edytujesz to, to pamietaj aby zmienić YAVE_KEY_MAPPED i w YAVE_keys_init dodać binding
@@ -34,10 +34,10 @@ enum { //kiedy edytujesz to, to pamietaj aby zmienić YAVE_KEY_MAPPED i w YAVE_k
     YAVE_KEY_DOWN,
     YAVE_KEY_RIGHT,
     YAVE_KEY_LEFT,
-    YAVE_ARROW_UP,
-    YAVE_ARROW_DOWN,
-    YAVE_ARROW_RIGHT,
-    YAVE_ARROW_LEFT
+    //YAVE_ARROW_UP,
+    //YAVE_ARROW_DOWN,
+    //YAVE_ARROW_RIGHT,
+    //YAVE_ARROW_LEFT
 };
 
 

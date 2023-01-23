@@ -195,8 +195,8 @@ int main()
     cam0.v[0]=0.1f;
     cam0.v[1]=0.1f;
     cam0.v[2]=0.1f;
-    cam0.rotation_v[0]=glm::radians(1.0f);
-    cam0.rotation_v[1]=glm::radians(1.0f);
+    cam0.rotation_v[0]=glm::radians(0.1f);
+    cam0.rotation_v[1]=glm::radians(0.1f);
 
     cam0.rotation[0]=0.0f;
     cam0.rotation[1]=0.0f;
@@ -206,8 +206,8 @@ int main()
     //keyboard
     YAVE_keys_init();
     glfwSetKeyCallback(window, key_callback);
-    
-
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
+    glfwSetCursorPosCallback(window, mouse_callback);
 
     // render loop
     // -----------
