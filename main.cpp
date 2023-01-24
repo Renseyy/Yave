@@ -43,6 +43,10 @@ const uint WIDTH = 800;
 const uint HEIGHT = 600;
 const float ASPECT = float(WIDTH)/HEIGHT;
 Camera cam0;
+float deltaTime;
+float lastFrame;
+u_char mode; //mode of displaying
+GLFWwindow* window;
 
 int main()
 {
@@ -59,7 +63,7 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Yet Another Voxel Engine", NULL, NULL); // jeśli chcemy fullscreena to w 4 argumencie można glfwGetPrimaryMonitor(), ale jest to ułomne XD
+    window = glfwCreateWindow(WIDTH, HEIGHT, "Yet Another Voxel Engine", NULL, NULL); // jeśli chcemy fullscreena to w 4 argumencie można glfwGetPrimaryMonitor(), ale jest to ułomne XD
     if (window == NULL)
     {
         std::cout << "Cus nie pyklo byczq przy tworzenia okna glfw" << std::endl;
@@ -212,13 +216,16 @@ int main()
         
     });
     
+    mode=1;
+    deltaTime=0.0f;
+    lastFrame=0.0f;
     //init camera
     cam0.position=glm::vec3(0.0f, 0.0f, -4.0f); //starting position
-    cam0.v[0]=0.05f; //x sensitivity
-    cam0.v[1]=0.05f; //y sensitivity
-    cam0.v[2]=0.05f; //z sensitivity
-    cam0.rotation_v[0]=glm::radians(0.1f); //rotation x-z sensitivity
-    cam0.rotation_v[1]=glm::radians(0.1f); //rotation y sensitivity
+    cam0.v[0]=YAVE_x_speed * deltaTime; //x sensitivity
+    cam0.v[1]=YAVE_y_speed * deltaTime; //y sensitivity
+    cam0.v[2]=YAVE_z_speed * deltaTime; //z sensitivity
+    cam0.rotation_v[0]=glm::radians(YAVE_rotx_speed * deltaTime); //rotation x-z sensitivity
+    cam0.rotation_v[1]=glm::radians(YAVE_roty_speed * deltaTime); //rotation y sensitivity
 
     cam0.rotation[0]=0.0f; //starting rotation
     cam0.rotation[1]=0.0f;
@@ -228,22 +235,28 @@ int main()
     //keyboard
     YAVE_keys_init();
     glfwSetKeyCallback(window, key_callback);
-    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
-    //glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
+    glfwSetCursorPosCallback(window, mouse_callback);
 
     // render loop
     // -----------
     float oldczas=glfwGetTime()-M_PI/2.0f;
     uint calc = 0;
+    float czas;
+    float val;
+    glm::mat4 view,projection,model;
+    unsigned int viewLoc;
 
-    
     while (!glfwWindowShouldClose(window))
     {
         // input
         // -----
-        processInput(window);
         glfwPollEvents();
 
+        //pozmieniajmy kolorki
+        czas = glfwGetTime();
+        deltaTime = czas-lastFrame;
+        lastFrame=czas;
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -258,14 +271,13 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         
 
-        //pozmieniajmy kolorki
-        float czas = glfwGetTime();
+        
         
         //keyboard
             YAVE_exec_keys();
 
         //render shaders
-        float val=sin(czas)/2.0f + 0.5f;
+        val=sin(czas)/2.0f + 0.5f;
         ourShader.use();
       
       //set view
@@ -274,16 +286,16 @@ int main()
         //up.x+=cam0.position.x;
         //up.z+=cam0.position.z;
         
-        glm::mat4 view          = glm::mat4(1.0f);
-        glm::mat4 projection    = glm::mat4(1.0f);
-        glm::mat4 model         = glm::mat4(1.0f);
+        view          = glm::mat4(1.0f);
+        projection    = glm::mat4(1.0f);
+        model         = glm::mat4(1.0f);
         
         view  = glm::rotate(view, cam0.rotation[0], up);
         view  = glm::rotate(view, cam0.rotation[1], glm::cross(cam0.position,up));
         projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 
         view  = glm::translate(view, cam0.position);
-        unsigned int viewLoc  = glGetUniformLocation(ourShader.ID, "view");
+        viewLoc  = glGetUniformLocation(ourShader.ID, "view");
         
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
         
@@ -296,7 +308,7 @@ int main()
         glBindVertexArray(VAO);
         for(uint i = 0; i < OBIECT_NUM; i++)
         {
-            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i].position);
             model = glm::rotate(model,glm::radians(45.0f),glm::vec3(0,1,0));
             ourShader.setFloat("windness",cubePositions[i].windness);
@@ -332,14 +344,6 @@ int main()
     // ------------------------------------------------------------------
     glfwTerminate();
     return 0;
-}
-
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
