@@ -12,11 +12,11 @@
 
 #include "global_objects.h"
 
-#define YAVE_KEY_MAPPED 7 //number of mapped keys
+#define YAVE_KEY_MAPPED 8 //number of mapped keys
 
 extern float flash;
 extern bool firstMouse;
-
+extern bool mode_block;
 
 struct YAVE_key{
 uint binding;
@@ -40,7 +40,8 @@ enum { //kiedy edytujesz to, to pamietaj aby zmienić YAVE_KEY_MAPPED i w YAVE_k
     YAVE_KEY_LEFT,
     YAVE_KEY_SHIFT,
     YAVE_KEY_SPACE,
-    YAVE_KEY_CTRL
+    YAVE_KEY_CTRL,
+    YAVE_KEY_TAB
     //YAVE_ARROW_UP,
     //YAVE_ARROW_DOWN,
     //YAVE_ARROW_RIGHT,
