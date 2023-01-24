@@ -1,4 +1,4 @@
-YAVE_LIB_DIR = src/yave
+YAVE_LIB_DIR = src/YAVE
 IMGUI_SRC_DIR = src/imgui
 IMGUI_LIB_DIR = src/imgui
 
