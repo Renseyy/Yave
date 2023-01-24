@@ -1,2 +1,3 @@
 yave
 .vscode/settings.json
+*.o

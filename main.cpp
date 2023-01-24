@@ -13,6 +13,9 @@ all rights reserved
 #include <glad/glad.h>
 //glfw
 #include <GLFW/glfw3.h>
+#include "lib/imgui/imgui.h"
+#include "lib/imgui/imgui_impl_opengl3.h"
+#include "lib/imgui/imgui_impl_glfw.h"
 //glm
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -27,10 +30,7 @@ all rights reserved
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-#include "lib/imgui/imgui.h"
-#include "lib/imgui/imgui_impl_opengl3_loader.h"
-#include "lib/imgui/imgui_impl_opengl3.h"
-#include "lib/imgui/imgui_impl_glfw.h"
+
 typedef unsigned int uint;
 
 //functions
@@ -68,6 +68,21 @@ int main()
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); //kiedy zmieniamy rozmiar okna wywołaj funkcje która dostosuje opengla do nowego wyświetlania
+    //IM_GUI
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsLight();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 460");   
+    bool show_demo_window = true;
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -213,8 +228,8 @@ int main()
     //keyboard
     YAVE_keys_init();
     glfwSetKeyCallback(window, key_callback);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
-    glfwSetCursorPosCallback(window, mouse_callback);
+    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
+    //glfwSetCursorPosCallback(window, mouse_callback);
 
     // render loop
     // -----------
@@ -227,7 +242,16 @@ int main()
         // input
         // -----
         processInput(window);
+        glfwPollEvents();
 
+        // Start the Dear ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+        if (show_demo_window)
+            ImGui::ShowDemoWindow(&show_demo_window);
         // render
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //takie szare tuo
@@ -289,19 +313,21 @@ int main()
             
             
         }
-        
-
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
-        glfwPollEvents();
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+    glfwDestroyWindow(window);
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
     glfwTerminate();
