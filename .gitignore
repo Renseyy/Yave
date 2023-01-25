@@ -1,6 +1,7 @@
 yave
+.vscode/*
 .vscode/settings.json
 *.o
 imgui.ini
 
-.vscode
+.vscode/c_cpp_properties.json
