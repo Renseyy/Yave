@@ -23,6 +23,7 @@ all rights reserved
 //custom libs
 #include "lib/global_objects.h"
 #include "lib/Shader.h"
+#include "lib/Camera.h"
 #include "lib/Noise.h"
 #include "lib/YAVE_input.h"
 //stb - textures
@@ -42,11 +43,11 @@ void processInput(GLFWwindow *window);
 const uint WIDTH = 800;
 const uint HEIGHT = 600;
 const float ASPECT = float(WIDTH)/HEIGHT;
-Camera cam0;
 float deltaTime;
 float lastFrame;
 u_char mode; //mode of displaying
 GLFWwindow* window;
+Camera cam0;
 
 int main()
 {
@@ -105,7 +106,7 @@ int main()
     // build and compile our shader program
     // ------------------------------------
     Shader ourShader("shaders/base.vertex.glsl", "shaders/base.fragment.glsl"); // you can name your shader files however you like
-    
+   
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
@@ -216,22 +217,15 @@ int main()
         
     });
     
-    mode=1;
+    mode=YAVE_MODE_NORMAL;
     deltaTime=0.0f;
     lastFrame=0.0f;
-    //init camera
-    cam0.position=glm::vec3(0.0f, 0.0f, -4.0f); //starting position
-    cam0.v[0]=YAVE_x_speed * deltaTime; //x sensitivity
-    cam0.v[1]=YAVE_y_speed * deltaTime; //y sensitivity
-    cam0.v[2]=YAVE_z_speed * deltaTime; //z sensitivity
-    cam0.rotation_v[0]=glm::radians(YAVE_rotx_speed * deltaTime); //rotation x-z sensitivity
-    cam0.rotation_v[1]=glm::radians(YAVE_roty_speed * deltaTime); //rotation y sensitivity
-
-    cam0.rotation[0]=0.0f; //starting rotation
-    cam0.rotation[1]=0.0f;
-
     
-    
+
+    //camera
+    cam0.Position=glm::vec3(0.0f,0.0f,4.0f);
+    cam0.MouseSensitivity=2.5f;
+
     //keyboard
     YAVE_keys_init();
     glfwSetKeyCallback(window, key_callback);
@@ -250,21 +244,30 @@ int main()
     while (!glfwWindowShouldClose(window))
     {
         // input
+        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+        // -------------------------------------------------------------------------------
+        glfwSwapBuffers(window);
         // -----
-        glfwPollEvents();
+         //keyboard
+        YAVE_exec_keys();
+        glfwPollEvents(); 
+        
 
         //pozmieniajmy kolorki
         czas = glfwGetTime();
         deltaTime = czas-lastFrame;
         lastFrame=czas;
         // Start the Dear ImGui frame
+        if(mode==YAVE_MODE_MOUSE || mode==YAVE_MODE_BACKPACK){
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-
+        }
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+        if(mode==YAVE_MODE_MOUSE || mode==YAVE_MODE_BACKPACK){
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
+        }
         // render
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //takie szare tuo
@@ -273,16 +276,14 @@ int main()
 
         
         
-        //keyboard
-            YAVE_exec_keys();
+      
 
         //render shaders
         val=sin(czas)/2.0f + 0.5f;
         ourShader.use();
       
       //set view
-      //camera varialibes
-        glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f); 
+    
         //up.x+=cam0.position.x;
         //up.z+=cam0.position.z;
         
@@ -290,11 +291,10 @@ int main()
         projection    = glm::mat4(1.0f);
         model         = glm::mat4(1.0f);
         
-        view  = glm::rotate(view, cam0.rotation[0], up);
-        view  = glm::rotate(view, cam0.rotation[1], glm::cross(cam0.position,up));
+        view  = cam0.GetViewMatrix();
+        
         projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 
-        view  = glm::translate(view, cam0.position);
         viewLoc  = glGetUniformLocation(ourShader.ID, "view");
         
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
@@ -325,11 +325,10 @@ int main()
             
             
         }
+        if(mode==YAVE_MODE_MOUSE || mode==YAVE_MODE_BACKPACK){
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
+        }
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:

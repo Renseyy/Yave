@@ -3,3 +3,4 @@ yave
 *.o
 imgui.ini
 
+.vscode

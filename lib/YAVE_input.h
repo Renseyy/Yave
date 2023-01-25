@@ -9,15 +9,18 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
+#include "Camera.h"
 #include "global_objects.h"
+
+#include <vector>
+#include <iostream>
 
 #define YAVE_KEY_MAPPED 8 //number of mapped keys
 
 extern float flash;
 extern bool firstMouse;
 extern bool mode_block;
-
+extern Camera cam0;
 struct YAVE_key{
 uint binding;
 u_char status;

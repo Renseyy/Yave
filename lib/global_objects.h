@@ -10,6 +10,14 @@
 #define YAVE_roty_speed 2.5f //velocity of rotation camera in y axis
 //###################################################
 
+//enums
+enum YAVE_MODES{
+    YAVE_MODE_NORMAL = 0, //tryb normalny, bez menu
+    YAVE_MODE_MOUSE, //brak możliwości poruszania, widoczna myszka
+    YAVE_MODE_BACKPACK //"plecak" widoczna myszka, możesz się poruszać
+};
+
+
 
 //global universal structures
 struct Block{
@@ -30,16 +38,8 @@ struct Block{
 
 };
 
-struct Camera{
-    glm::vec3 position;
-    float rotation[2]; //rotation
-    float v[3]; //velocity
-    float rotation_v[2]; //rotation velocity
-};
-
-extern Camera cam0;
 extern float lastX , lastY;
-
+extern double xoffset, yoffset;
 extern float deltaTime;	// Time between current frame and last frame
 extern float lastFrame; // Time of last frame
 extern u_char mode;
