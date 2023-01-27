@@ -20,6 +20,8 @@ enum YAVE_MODES{
 
 
 //global universal structures
+
+
 struct Block{
     glm::vec3 position;
     uint rotation = 0;
@@ -34,6 +36,8 @@ struct Block{
         0,  // Dół
         0   //Góra
     };
+    glm::vec4 color = {0,0,0,0};
+
 
 
 };

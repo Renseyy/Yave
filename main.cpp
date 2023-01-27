@@ -100,8 +100,8 @@ int main()
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
     glEnable( GL_BLEND );
-    glEnable(GL_CULL_FACE);  
-    glCullFace(GL_BACK);  
+    //glEnable(GL_CULL_FACE);  
+    glCullFace(GL_NONE);  
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
     // build and compile our shader program
     // ------------------------------------
@@ -161,11 +161,15 @@ int main()
             type:1,
             textureIDs: {
                 5,5,5,5,3,6
-            }
+            },
+            color:{1.0f,1.0f,0.4f,1.0f}
+            
         },
         {
             position:{0.0f,0.0f,0.0f},
-            windness:1
+            windness:1,
+            textureID:7,
+            color:{1.0f,0.8f,0.0f,0.7f}
         }
         
         
@@ -206,7 +210,8 @@ int main()
         "textures/dirt.png",
         "textures/glass.png",
         "textures/grass_block_side.png",
-         "textures/grass_block_top.png"
+        "textures/grass_block_top.png",
+        "textures/acacia_leaves.png"
 
         
         
@@ -299,7 +304,7 @@ int main()
         ourShader.setMat4("projection", projection);
         unsigned int addonLoc = glGetUniformLocation(ourShader.ID, "globalWind");
         glUniform1f(addonLoc,SimplexNoise::noise((czas ))/ 10);
-
+        cubePositions[1].color = {val/10,1.0f,0.0,0.5f}; 
 
         // render the triangle
         glBindVertexArray(VAO);
@@ -310,6 +315,7 @@ int main()
             model = glm::rotate(model,glm::radians(45.0f),glm::vec3(0,1,0));
             ourShader.setFloat("windness",cubePositions[i].windness);
             ourShader.setMat4("model", model);
+            ourShader.setVec4("color",cubePositions[i].color);
             if(cubePositions[i].type == 0){
                 glUniform1i(glGetUniformLocation(ourShader.ID, "tex"), cubePositions[i].textureID);
                 glDrawArrays(GL_TRIANGLES, 0, 36);

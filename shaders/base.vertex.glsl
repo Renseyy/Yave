@@ -8,6 +8,7 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform float globalWind;
 uniform float windness;
+
 void main()
 {
     float tmp = (globalWind)* windness;
