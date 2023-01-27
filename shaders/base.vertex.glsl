@@ -10,7 +10,7 @@ uniform float globalWind;
 uniform float windness;
 void main()
 {
-    float tmp = (globalWind - 0.5f)* windness;
+    float tmp = (globalWind)* windness;
     float tmpY = aPos.y + 0.5f;
     gl_Position = projection * view  * model* vec4(aPos.x + tmp * tmpY ,aPos.y, aPos.z + tmp * tmpY, 1.0f);
     TexCoord = aTexCoord;

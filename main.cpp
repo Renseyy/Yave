@@ -24,7 +24,7 @@ all rights reserved
 #include "lib/global_objects.h"
 #include "lib/Shader.h"
 #include "lib/Camera.h"
-#include "lib/Noise.h"
+#include "lib/SimplexNoise.h"
 #include "lib/YAVE_input.h"
 //stb - textures
 #include "lib/TextureManager.h"
@@ -197,11 +197,6 @@ int main()
 
     unsigned char i=0; //nie marnujmy pamięci ;)
 
-    //Perlin noise 
-    const siv::PerlinNoise::seed_type seed = 123456u;
-
-	const siv::PerlinNoise perlin{ seed };
-
     //Textures
     TextureManager textureManager;
     textureManager.loadTextures({
@@ -301,7 +296,7 @@ int main()
         
         ourShader.setMat4("projection", projection);
         unsigned int addonLoc = glGetUniformLocation(ourShader.ID, "globalWind");
-        glUniform1f(addonLoc,perlin.noise1D_01(val));
+        glUniform1f(addonLoc,SimplexNoise::noise(czas));
 
 
         // render the triangle
