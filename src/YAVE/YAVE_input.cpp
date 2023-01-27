@@ -5,7 +5,6 @@ YAVE_key YAVE_keys[YAVE_KEY_MAPPED];
 //global varialibes
 float lastX , lastY;
 double xoffset, yoffset;
-float flash;
 bool firstMouse;
 bool mode_block;
 
@@ -13,7 +12,6 @@ void YAVE_keys_init(void){
     xoffset=0;
     yoffset=0;
     mode_block=false;
-    flash=3.0f;
     firstMouse=true;
     //********************bindings
     YAVE_keys[YAVE_KEY_UP].binding      = GLFW_KEY_W;
@@ -38,13 +36,27 @@ void YAVE_keys_init(void){
 void YAVE_exec_keys(void){
     if(mode==YAVE_MODE_NORMAL || mode==YAVE_MODE_BACKPACK){ 
         if(YAVE_keys[YAVE_KEY_UP].pressed) cam0.ProcessKeyboard(FORWARD,deltaTime);     
-         if(YAVE_keys[YAVE_KEY_DOWN].pressed) cam0.ProcessKeyboard(BACKWARD,deltaTime);
+        if(YAVE_keys[YAVE_KEY_DOWN].pressed) cam0.ProcessKeyboard(BACKWARD,deltaTime);
         if(YAVE_keys[YAVE_KEY_RIGHT].pressed) cam0.ProcessKeyboard(RIGHT,deltaTime);
         if(YAVE_keys[YAVE_KEY_LEFT].pressed) cam0.ProcessKeyboard(LEFT,deltaTime);
-    }
-       // if(YAVE_keys[YAVE_KEY_SHIFT].pressed) cam0.position  += glm::vec3(0, cam0.v[1] , 0);
-       // if(YAVE_keys[YAVE_KEY_SPACE].pressed) cam0.position  -= glm::vec3(0, cam0.v[1] , 0);
 
+        if(cam0.mode==CAM_DRONE){
+            if(YAVE_keys[YAVE_KEY_SHIFT].pressed){
+                cam0.ProcessKeyboard(DOWNWARD,deltaTime);
+            }
+
+            if(YAVE_keys[YAVE_KEY_SPACE].pressed){
+                cam0.ProcessKeyboard(UPWARD,deltaTime);
+            }
+        }
+
+        //flash
+        if(YAVE_keys[YAVE_KEY_CTRL].pressed)
+            cam0.flash=YAVE_FLASH;
+        else
+            cam0.flash=1.0f;
+    }
+ 
         if(YAVE_keys[YAVE_KEY_TAB].pressed){
             if(!mode_block){
                 if(mode==YAVE_MODE_NORMAL){
@@ -67,13 +79,6 @@ void YAVE_exec_keys(void){
                 mode_block=false;
             }
         }
-        //if(YAVE_keys[YAVE_ARROW_UP].pressed) cam0.rotation[1]  -= cam0.rotation_v[1];
-        //if(YAVE_keys[YAVE_ARROW_DOWN].pressed) cam0.rotation[1]  += cam0.rotation_v[1];
-        //if(YAVE_keys[YAVE_ARROW_RIGHT].pressed) cam0.rotation[0]  += cam0.rotation_v[0];
-        //if(YAVE_keys[YAVE_ARROW_LEFT].pressed) cam0.rotation[0]  -= cam0.rotation_v[0];
-
-        //if(cam0.rotation[0]>M_PI) cam0.rotation[0]-=2*M_PI;
-        //if(cam0.rotation[0]<-M_PI) cam0.rotation[0]+=2*M_PI;
 }
 
 
@@ -86,11 +91,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         glfwSetWindowShouldClose(window, true);
 
 
-    //cam0.v[0]=YAVE_x_speed * deltaTime; //x sensitivity
-    //cam0.v[1]=YAVE_y_speed * deltaTime; //y sensitivity
-    //cam0.v[2]=YAVE_z_speed * deltaTime; //z sensitivity
-    //cam0.rotation_v[0]=glm::radians(YAVE_rotx_speed) * deltaTime; //rotation x-z sensitivity
-    //cam0.rotation_v[1]=glm::radians(YAVE_roty_speed) * deltaTime; //rotation y sensitivity
 
     for(int i=0;i<YAVE_KEY_MAPPED;i++){
     if (key == YAVE_keys[i].binding){

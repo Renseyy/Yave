@@ -12,7 +12,15 @@ enum Camera_Movement {
     FORWARD,
     BACKWARD,
     LEFT,
-    RIGHT
+    RIGHT,
+    DOWNWARD,
+    UPWARD
+};
+
+enum Camera_Mode {
+    CAM_NORMAL, //in-game mode
+    CAM_DRONE, //shift:up space:down
+    CAM_FREE //free camera mode
 };
 
 // Default camera values
@@ -40,6 +48,9 @@ public:
     float MovementSpeed;
     float MouseSensitivity;
     float Zoom;
+    //"fast forward" ;)
+    float flash = 1.0f;
+    u_char mode=CAM_NORMAL;
 
     // constructor with vectors
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
@@ -69,15 +80,31 @@ public:
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
     void ProcessKeyboard(Camera_Movement direction, float deltaTime)
     {
+        glm::vec3 tmpFront, tmpRight, tmpUp;
+
+        if(mode==CAM_NORMAL || mode==CAM_DRONE){
+            tmpFront=glm::vec3(cos(glm::radians(Yaw)),0,sin(glm::radians(Yaw)));
+            tmpRight=glm::normalize(glm::cross(tmpFront, WorldUp));;
+            tmpUp=WorldUp;
+        }
+        else if(mode==CAM_FREE){
+            tmpFront=Front;
+            tmpRight=Right;
+            tmpUp=Up;
+        }
         float velocity = MovementSpeed * deltaTime;
         if (direction == FORWARD)
-            Position += Front * velocity;
+            Position += tmpFront * velocity * flash;
         if (direction == BACKWARD)
-            Position -= Front * velocity;
+            Position -= tmpFront * velocity * flash;
         if (direction == LEFT)
-            Position -= Right * velocity;
+            Position -= tmpRight * velocity * flash;
         if (direction == RIGHT)
-            Position += Right * velocity;
+            Position += tmpRight * velocity * flash;
+        if (direction == DOWNWARD)
+            Position -= tmpUp * velocity * flash;
+        if (direction == UPWARD)
+            Position += tmpUp * velocity * flash;
     }
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
@@ -98,7 +125,6 @@ public:
                 Pitch = -89.0f;
         }
 
-        // update Front, Right and Up Vectors using the updated Euler angles
         updateCameraVectors();
     }
 
