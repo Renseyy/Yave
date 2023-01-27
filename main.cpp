@@ -220,6 +220,8 @@ int main()
     //camera
     cam0.Position=glm::vec3(0.0f,0.0f,4.0f);
     cam0.MouseSensitivity=2.5f;
+    cam0.mode=CAM_DRONE;
+
 
     //keyboard
     YAVE_keys_init();

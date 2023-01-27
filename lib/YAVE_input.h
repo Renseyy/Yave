@@ -15,9 +15,9 @@
 #include <vector>
 #include <iostream>
 
+#define YAVE_FLASH 3.0f //how many faster should it go
 #define YAVE_KEY_MAPPED 8 //number of mapped keys
 
-extern float flash;
 extern bool firstMouse;
 extern bool mode_block;
 extern Camera cam0;
