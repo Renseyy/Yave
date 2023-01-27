@@ -303,7 +303,7 @@ int main()
         
         ourShader.setMat4("projection", projection);
         unsigned int addonLoc = glGetUniformLocation(ourShader.ID, "globalWind");
-        glUniform1f(addonLoc,SimplexNoise::noise(czas));
+        glUniform1f(addonLoc,SimplexNoise::noise((czas ))/ 10);
 
 
         // render the triangle
