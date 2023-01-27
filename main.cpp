@@ -48,6 +48,8 @@ float lastFrame;
 u_char mode; //mode of displaying
 GLFWwindow* window;
 Camera cam0;
+float ratio;
+
 
 int main()
 {
@@ -243,6 +245,9 @@ int main()
     glm::mat4 view,projection,model;
     unsigned int viewLoc;
 
+    ratio=(float)WIDTH / (float)HEIGHT;
+
+
     while (!glfwWindowShouldClose(window))
     {
         // input
@@ -295,7 +300,7 @@ int main()
         
         view  = cam0.GetViewMatrix();
         
-        projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(45.0f), ratio , 0.1f, 100.0f);
 
         viewLoc  = glGetUniformLocation(ourShader.ID, "view");
         
@@ -354,9 +359,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
-    int w = height * ASPECT;
-    int left = (width - w) / 2;
-    glViewport(left, 0, w, height);
+    glViewport(0, 0, width, height);
+    ratio=(float)width/(float)height;
 }
 
 
