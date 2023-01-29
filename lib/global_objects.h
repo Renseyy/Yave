@@ -47,7 +47,7 @@ extern double xoffset, yoffset;
 extern float deltaTime;	// Time between current frame and last frame
 extern float lastFrame; // Time of last frame
 extern u_char mode;
-extern float ratio; //stosunek szerokości do wysokości
+extern float YAVE_ratio; //stosunek szerokości do wysokości
 extern GLFWwindow* window;
 
 #endif

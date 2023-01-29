@@ -44,3 +44,16 @@ mesa-libGLU-devel
 valgrind
 valgrind-devel
 ```
+
+- assimp
+    na Fedorze 37:
+```
+sudo dnf install assimp-devel
+```
+
+- możliwe że potrzebne też do assimp ( fedora 37 instaluje je automatycznie )
+```
+assimp
+irrXML
+poly2tri
+```

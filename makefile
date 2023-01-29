@@ -1,8 +1,8 @@
 YAVE_LIB_DIR = src/YAVE
 IMGUI_SRC_DIR = src/imgui
 IMGUI_LIB_DIR = src/imgui
-
-COMPILE = g++ -std=c++20 -lglad -lglfw -lGL -lm -lX11 -lpthread -lXrandr -lXi -ldl
+ASSIMP_FLAGS = -I include/assimp -L lib64 -lassimp 
+COMPILE = g++ -std=c++20 -lglad -lglfw -lGL -lm -lX11 -lpthread -lXrandr -lXi -ldl -lstdc++fs
 
 OBJ := $(patsubst %.cpp,%.o,$(wildcard $(IMGUI_SRC_DIR)/imgui*.cpp))
 OF = yave #output file 
@@ -28,7 +28,9 @@ build:
 	$(OBJ) \
 	-I $(IMGUI_LIB_DIR) \
 	$(YAVE_LIB_DIR)/*.cpp 	\
-	-std=c++20 -lglad -lglfw -lGL -lm -lX11 -lpthread -lXrandr -lXi -ldl
+	-std=c++20 -lglad -lglfw -lGL -lm -lX11 -lpthread -lXrandr -lXi -ldl $(ASSIMP_FLAGS)
+
+
 
 run: build _chmod _run
 

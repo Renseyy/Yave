@@ -24,6 +24,8 @@ all rights reserved
 #include "lib/global_objects.h"
 #include "lib/Shader.h"
 #include "lib/Camera.h"
+#include "lib/Animator.h"
+#include "lib/animations/Model.h"
 #include "lib/SimplexNoise.h"
 #include "lib/YAVE_input.h"
 //stb - textures
@@ -48,7 +50,7 @@ float lastFrame;
 u_char mode; //mode of displaying
 GLFWwindow* window;
 Camera cam0;
-float ratio;
+float YAVE_ratio;
 
 
 int main()
@@ -107,7 +109,7 @@ int main()
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
     // build and compile our shader program
     // ------------------------------------
-    Shader ourShader("shaders/base.vertex.glsl", "shaders/base.fragment.glsl"); // you can name your shader files however you like
+    //Shader ourShader("shaders/base.vertex.glsl", "shaders/base.fragment.glsl"); // you can name your shader files however you like
    
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -245,7 +247,27 @@ int main()
     glm::mat4 view,projection,model;
     unsigned int viewLoc;
 
-    ratio=(float)WIDTH / (float)HEIGHT;
+    YAVE_ratio=(float)WIDTH / (float)HEIGHT;
+
+
+    // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
+	stbi_set_flip_vertically_on_load(true);
+
+	// configure global opengl state
+	// -----------------------------
+	glEnable(GL_DEPTH_TEST);
+
+	// build and compile shaders
+	// -------------------------
+	Shader ourShader("shaders/animations/anim_model.vs", "shaders/animations/anim_model.fs");
+
+	
+	// load models
+	// -----------
+	Model ourModel("animations/snake.dae");
+	Animation danceAnimation("animations/snake.dae",&ourModel);
+	Animator animator(&danceAnimation);
+
 
 
     while (!glfwWindowShouldClose(window))
@@ -260,97 +282,50 @@ int main()
         glfwPollEvents(); 
         
 
-        //pozmieniajmy kolorki
         czas = glfwGetTime();
         deltaTime = czas-lastFrame;
         lastFrame=czas;
-        // Start the Dear ImGui frame
-        if(mode==YAVE_MODE_MOUSE || mode==YAVE_MODE_BACKPACK){
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-        }
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if(mode==YAVE_MODE_MOUSE || mode==YAVE_MODE_BACKPACK){
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
-        }
-        // render
-        // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //takie szare tuo
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-        
 
-        
-        
-      
+        animator.UpdateAnimation(deltaTime);
+		
+		// render
+		// ------
+		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //render shaders
-        val=sin(czas)/2.0f + 0.5f;
-        ourShader.use();
-      
-      //set view
-    
-        //up.x+=cam0.position.x;
-        //up.z+=cam0.position.z;
-        
-        view          = glm::mat4(1.0f);
+		// don't forget to enable shader before setting uniforms
+		ourShader.use();
+
+		view          = glm::mat4(1.0f);
         projection    = glm::mat4(1.0f);
         model         = glm::mat4(1.0f);
         
         view  = cam0.GetViewMatrix();
         
-        projection = glm::perspective(glm::radians(45.0f), ratio , 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(45.0f), YAVE_ratio , 0.1f, 100.0f);
 
-        viewLoc  = glGetUniformLocation(ourShader.ID, "view");
+
         
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
-        
-        ourShader.setMat4("projection", projection);
-        unsigned int addonLoc = glGetUniformLocation(ourShader.ID, "globalWind");
-        glUniform1f(addonLoc,SimplexNoise::noise((czas ))/ 10);
-        cubePositions[1].color = {val/10,1.0f,0.0,0.5f}; 
+		ourShader.setMat4("projection", projection);
+		ourShader.setMat4("view", view);
 
-        // render the triangle
-        glBindVertexArray(VAO);
-        for(uint i = 0; i < OBIECT_NUM; i++)
-        {
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i].position);
-            model = glm::rotate(model,glm::radians(45.0f),glm::vec3(0,1,0));
-            ourShader.setFloat("windness",cubePositions[i].windness);
-            ourShader.setMat4("model", model);
-            ourShader.setVec4("color",cubePositions[i].color);
-            if(cubePositions[i].type == 0){
-                glUniform1i(glGetUniformLocation(ourShader.ID, "tex"), cubePositions[i].textureID);
-                glDrawArrays(GL_TRIANGLES, 0, 36);
-            }else{
-                for(uint j = 0; j < 6;j++){
-                    glUniform1i(glGetUniformLocation(ourShader.ID, "tex"), cubePositions[i].textureIDs[j]);
-                    glDrawArrays(GL_TRIANGLES, j*6, 6);
-                }
-            }
-            
-            
-        }
-        if(mode==YAVE_MODE_MOUSE || mode==YAVE_MODE_BACKPACK){
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        }
+        auto transforms = animator.GetFinalBoneMatrices();
+		for (int i = 0; i < transforms.size(); ++i)
+			ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+
+
+		// render the loaded model
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, -0.4f, 0.0f)); // translate it down so it's at the center of the scene
+		model = glm::scale(model, glm::vec3(.5f, .5f, .5f));	// it's a bit too big for our scene, so scale it down
+		ourShader.setMat4("model", model);
+		ourModel.Draw(ourShader);
+
     }
 
-    // optional: de-allocate all resources once they've outlived their purpose:
-    // ------------------------------------------------------------------------
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-    glfwDestroyWindow(window);
-    // glfw: terminate, clearing all previously allocated GLFW resources.
-    // ------------------------------------------------------------------
     glfwTerminate();
-    return 0;
+	return 0;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -360,7 +335,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
-    ratio=(float)width/(float)height;
+    YAVE_ratio=(float)width/(float)height;
 }
 
 
