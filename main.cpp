@@ -8,7 +8,7 @@ all rights reserved
 #include <iostream>
 #include <string>
 #include <cmath>
-
+#include <filesystem>
 //glad
 #include <glad/glad.h>
 //glfw
@@ -264,10 +264,11 @@ int main()
 	
 	// load models
 	// -----------
-	Model ourModel("animations/snake.dae");
-	Animation danceAnimation("animations/snake.dae",&ourModel);
-	Animator animator(&danceAnimation);
-
+    cout<<"loading animation..."<<endl;
+	Model ourModel(filesystem::path("animations/dancing_vampire.dae"));
+	Animation danceAnimation(filesystem::path("animations/dancing_vampire.dae"),&ourModel);
+    Animator animator(&danceAnimation);
+    cout<<"loaded"<<endl;
 
 
     while (!glfwWindowShouldClose(window))
@@ -290,7 +291,7 @@ int main()
 		
 		// render
 		// ------
-		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+		 glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //takie szare tuo
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// don't forget to enable shader before setting uniforms
