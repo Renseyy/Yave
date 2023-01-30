@@ -157,10 +157,10 @@ int main()
     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
     -0.5f,  0.5f,  0.5f,  0.0f, 0.0f  // bottom-left        
 };
-    const uint OBIECT_NUM = 2;
+    const uint OBIECT_NUM = 1;
     Block cubePositions[] = {
         {
-            position:{0.0f,-1.0f,0.0f},
+            position:{0.0f,-0.5f,0.0f},
             rotation: 1,
             type:1,
             textureIDs: {
@@ -260,13 +260,13 @@ int main()
 	// build and compile shaders
 	// -------------------------
 	Shader ourShader("shaders/animations/anim_model.vs", "shaders/animations/anim_model.fs");
-
+    Shader groundShader("shaders/base.vertex.glsl", "shaders/base.fragment.glsl"); 
 	
 	// load models
 	// -----------
     cout<<"loading animation..."<<endl;
-	Model ourModel(filesystem::path("animations/Flair/Flair.dae"));
-	Animation danceAnimation(filesystem::path("animations/Flair/Flair.dae"),&ourModel);
+	Model ourModel(filesystem::path("animations/Ymca_Dance/Ymca_Dance.dae"));
+	Animation danceAnimation(filesystem::path("animations/Ymca_Dance/Ymca_Dance.dae"),&ourModel);
     Animator animator(&danceAnimation);
     cout<<"loaded"<<endl;
 
@@ -287,12 +287,73 @@ int main()
         deltaTime = czas-lastFrame;
         lastFrame=czas;
 
+        // gui
+        if(mode==YAVE_MODE_MOUSE || mode==YAVE_MODE_BACKPACK){
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        }
+        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+        if(mode==YAVE_MODE_MOUSE || mode==YAVE_MODE_BACKPACK){
+        if (show_demo_window)
+            ImGui::ShowDemoWindow(&show_demo_window);
+        }
+
+
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //takie szare tuo
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        val=sin(czas)/2.0f + 0.5f;
+        //ground
+        groundShader.use();
+
+        view          = glm::mat4(1.0f);
+        projection    = glm::mat4(1.0f);
+        model         = glm::mat4(1.0f);
+        
+        view  = cam0.GetViewMatrix();
+        
+        projection = glm::perspective(glm::radians(45.0f), YAVE_ratio , 0.1f, 100.0f);
+
+        viewLoc  = glGetUniformLocation(groundShader.ID, "view");
+        
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+        
+        groundShader.setMat4("projection", projection);
+        unsigned int addonLoc = glGetUniformLocation(groundShader.ID, "globalWind");
+        glUniform1f(addonLoc,SimplexNoise::noise((czas ))/ 10);
+        cubePositions[1].color = {val/10,1.0f,0.0,0.5f}; 
+
+        // render the triangle
+        glBindVertexArray(VAO);
+        for(uint i = 0; i < OBIECT_NUM; i++)
+        {
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i].position);
+            model = glm::rotate(model,glm::radians(45.0f),glm::vec3(0,1,0));
+            groundShader.setFloat("windness",cubePositions[i].windness);
+            groundShader.setMat4("model", model);
+            groundShader.setVec4("color",cubePositions[i].color);
+            if(cubePositions[i].type == 0){
+                glUniform1i(glGetUniformLocation(groundShader.ID, "tex"), cubePositions[i].textureID);
+                glDrawArrays(GL_TRIANGLES, 0, 36);
+            }else{
+                for(uint j = 0; j < 6;j++){
+                    glUniform1i(glGetUniformLocation(groundShader.ID, "tex"), cubePositions[i].textureIDs[j]);
+                    glDrawArrays(GL_TRIANGLES, j*6, 6);
+                }
+            }
+            
+            
+        }
+        
+
+
+        //*******************************************animation
         animator.UpdateAnimation(deltaTime);
 		
 		// render
 		// ------
-		 glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //takie szare tuo
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// don't forget to enable shader before setting uniforms
 		ourShader.use();
@@ -318,11 +379,24 @@ int main()
 
 		// render the loaded model
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, -0.4f, 0.0f)); // translate it down so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(.5f, .5f, .5f));	// it's a bit too big for our scene, so scale it down
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+		//model = glm::scale(model, glm::vec3(.5f, .5f, .5f));	// it's a bit too big for our scene, so scale it down
 		ourShader.setMat4("model", model);
 		ourModel.Draw(ourShader);
-
+        //*******************************************************animation end
+    
+        //imgui
+        if(mode==YAVE_MODE_MOUSE || mode==YAVE_MODE_BACKPACK){
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        }
+    
+    
+    
+    
+    
+    
+    
     }
 
     glfwTerminate();
