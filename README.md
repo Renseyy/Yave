@@ -45,7 +45,7 @@ valgrind
 valgrind-devel
 ```
 
-- assimp
+- assimp: tutaj sie sprawy komplikują, jeśli chcemy uruchomić tylko "tańczącego wampira" to wystarczy
     na Fedorze 37:
 ```
 sudo dnf install assimp-devel
@@ -57,3 +57,42 @@ assimp
 irrXML
 poly2tri
 ```
+
+- kiedy chcemy uruchomić dowolną przykładową animacje z mixamo.com to musimy zainstalować najnowszego assimpa:
+
+https://github.com/assimp/assimp/blob/master/Build.md
+
+na Fedorze:
+
+(najpierw CMake)
+```
+sudo dnf install cmake
+```
+Assimp:
+```
+git clone https://github.com/assimp/assimp.git
+cd assimp
+cmake CMakeLists.txt 
+cmake --build .
+sudo make install
+```
+
+Może się okazać że wystąpi błąd:
+```
+assimp: error while loading shared libraries: libassimp.so.5: cannot open shared object file: No such file or directory
+```
+lub podobny
+
+wtedy za pomocą polecenia:
+```
+find / | grep libassimp.so
+```
+szukamy wymienionego pliku i wykonujemy:
+```
+export LD_LIBRARY_PATH=<ścieżka do tego pliku bez jego nazwy>
+```
+czyli np:
+```
+export LD_LIBRARY_PATH=/usr/local/lib64/
+```
+można oczywiście powyższe polecenie dodać do pliku .bashrc aby nie musieć go wykonywać po każdym restrcie komputera

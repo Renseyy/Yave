@@ -265,8 +265,8 @@ int main()
 	// load models
 	// -----------
     cout<<"loading animation..."<<endl;
-	Model ourModel(filesystem::path("animations/dancing_vampire.dae"));
-	Animation danceAnimation(filesystem::path("animations/dancing_vampire.dae"),&ourModel);
+	Model ourModel(filesystem::path("animations/Flair/Flair.dae"));
+	Animation danceAnimation(filesystem::path("animations/Flair/Flair.dae"),&ourModel);
     Animator animator(&danceAnimation);
     cout<<"loaded"<<endl;
 
