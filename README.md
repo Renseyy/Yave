@@ -2,31 +2,34 @@
 
 ### Testowy projekt mający na celu naukę OpenGL i shaderów (GLSL). Celem jest stworzenie silnika do gry Sylian.
 Główne założenia tego silnika to:
-    - ładne wyglądanie, efekty świetlne i graficzne
-    - działać szybko i opierać się na karcie graficznej
-    - obsługiwanie przez server, jest to de facto ( i ma być ) jedynie klient
-    - musi być napisany w C++ ( z domieszką C ), może tymczasowo kożystac z LUA ( ale to raczej server )
+- ładne wyglądanie, efekty świetlne i graficzne
+- działać szybko i opierać się na karcie graficznej
+- obsługiwanie przez server, jest to de facto ( i ma być ) jedynie klient
+- musi być napisany w C++ ( z domieszką C ), może tymczasowo kożystac z LUA ( ale to raczej server )
 
-## zależności potrzebne do uruchomienia
-- glad - zobacz README.md w folderze .local lub postępuj zgodnie z "Setting up GLAD" na stronie : 
+Należy zainstalować zależności a następnie ( na Linuxie na razie tylko ) wywołać w terminalu polecenie:
+```
+make all
+```
+później po każdej zmianie w kodzie wystarczy użyć polecenia:
+```
+make
+```
 
-https://learnopengl.com/Getting-started/Creating-a-window
+## Zależności:
+### [Fedora 37](readme-fedora.md)
+### [Manjaro](readme-manjaro.md)
 
+### Ogólnie
+- glad
 - glfw3 i glm
-   
-    na Fedorze 37:
-```
-sudo dnf install glfw-devel
-sudo dnf install glm-devel
-```
-
 - stb-image.h
 ```
 git clone https://github.com/nothings/stb.git
 sudo cp stb/stb_image.h /usr/local/include/
 ```
 
-- możliwe że potrzebne też do glfw3 ( fedora 37 instaluje je automatycznie )
+- możliwe że potrzebne też do glfw3
 ```
 gl-manpages  
 libXcursor-devel
@@ -45,13 +48,10 @@ valgrind
 valgrind-devel
 ```
 
-- assimp: tutaj sie sprawy komplikują, jeśli chcemy uruchomić tylko "tańczącego wampira" to wystarczy
-    na Fedorze 37:
-```
-sudo dnf install assimp-devel
-```
+- assimp: tutaj sie sprawy komplikują, jeśli chcemy uruchomić tylko "tańczącego wampira" to wystarczy assimp-devel
 
-- możliwe że potrzebne też do assimp ( fedora 37 instaluje je automatycznie )
+
+- możliwe że potrzebne też do assimp
 ```
 assimp
 irrXML
@@ -62,12 +62,8 @@ poly2tri
 
 https://github.com/assimp/assimp/blob/master/Build.md
 
-na Fedorze:
+najpierw potrzebny Cmake
 
-(najpierw CMake)
-```
-sudo dnf install cmake
-```
 Assimp:
 ```
 git clone https://github.com/assimp/assimp.git
@@ -95,4 +91,7 @@ czyli np:
 ```
 export LD_LIBRARY_PATH=/usr/local/lib64/
 ```
-można oczywiście powyższe polecenie dodać do pliku .bashrc aby nie musieć go wykonywać po każdym restrcie komputera
+można oczywiście powyższe polecenie dodać do pliku .bashrc aby nie musieć go wykonywać po każdym restarcie komputera
+
+
+
