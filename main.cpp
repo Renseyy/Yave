@@ -25,7 +25,7 @@ all rights reserved
 #include "lib/Shader.h"
 #include "lib/Camera.h"
 #include "lib/Animator.h"
-#include "lib/animations/Model.h"
+#include "lib/Model.h"
 #include "lib/SimplexNoise.h"
 #include "lib/YAVE_input.h"
 //stb - textures
