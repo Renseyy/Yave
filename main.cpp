@@ -259,15 +259,17 @@ int main()
 
 	// build and compile shaders
 	// -------------------------
-	Shader ourShader("shaders/animations/anim_model.vs", "shaders/animations/anim_model.fs");
-    Shader groundShader("shaders/base.vertex.glsl", "shaders/base.fragment.glsl"); 
+    Shader ourShader("shaders/models/model.vs", "shaders/models/model.fs");
+	//Shader ourShader("shaders/animations/anim_model.vs", "shaders/animations/anim_model.fs");
+    //Shader groundShader("shaders/base.vertex.glsl", "shaders/base.fragment.glsl"); 
 	
 	// load models
 	// -----------
-    cout<<"loading animation..."<<endl;
-	Model ourModel(filesystem::path("animations/Ymca_Dance/Ymca_Dance.dae"));
-	Animation danceAnimation(filesystem::path("animations/Ymca_Dance/Ymca_Dance.dae"),&ourModel);
-    Animator animator(&danceAnimation);
+    cout<<"loading model..."<<endl;
+    Model ourModel(filesystem::path("models/cube.glb"));
+	//Model ourModel(filesystem::path("animations/Ymca_Dance/Ymca_Dance.dae"));
+	//Animation danceAnimation(filesystem::path("animations/Ymca_Dance/Ymca_Dance.dae"),&ourModel);
+    //Animator animator(&danceAnimation);
     cout<<"loaded"<<endl;
 
 
@@ -305,13 +307,13 @@ int main()
 
         val=sin(czas)/2.0f + 0.5f;
         //ground
-        groundShader.use();
+        //groundShader.use();
 
         view          = glm::mat4(1.0f);
         projection    = glm::mat4(1.0f);
         model         = glm::mat4(1.0f);
         
-        view  = cam0.GetViewMatrix();
+        /*view  = cam0.GetViewMatrix();
         
         projection = glm::perspective(glm::radians(45.0f), YAVE_ratio , 0.1f, 100.0f);
 
@@ -347,11 +349,10 @@ int main()
             
         }
         
-
+        */
 
         //*******************************************animation
-        animator.UpdateAnimation(deltaTime);
-		
+        //animator.UpdateAnimation(deltaTime);
 		// render
 		// ------
 
@@ -372,9 +373,9 @@ int main()
 		ourShader.setMat4("projection", projection);
 		ourShader.setMat4("view", view);
 
-        auto transforms = animator.GetFinalBoneMatrices();
-		for (int i = 0; i < transforms.size(); ++i)
-			ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+        //auto transforms = animator.GetFinalBoneMatrices();
+		//for (int i = 0; i < transforms.size(); ++i)
+		//	ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 
 
 		// render the loaded model
