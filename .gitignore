@@ -1,7 +1,12 @@
-yave
+Yave
 .vscode/*
 .vscode/settings.json
 *.o
 imgui.ini
 
 .vscode/c_cpp_properties.json
+CMakeFiles/
+cmake_install.cmake
+Makefile
+CMakeCache.txt
+libImgui.a

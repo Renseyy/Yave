@@ -20,3 +20,20 @@ sudo cp stb/stb_image.h /usr/local/include/
 ```
 sudo dnf install assimp-devel
 ```
+
+- dodatkowe
+aby kompilować na windowsa potrzebujesz mingw
+```
+sudo pacman -S mingw-w64
+```
+
+prawdopodobnie ukaże się 5 pakietów do wyboru,
+domyślnie zostaną zainstalowane wszystkie:
+```
+mingw-w64-binutils
+mingw-w64-crt
+mingw-w64-gcc
+mingw-w64-headers
+mingw-w64-winpthreads
+
+```
