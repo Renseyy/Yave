@@ -7,18 +7,22 @@ Główne założenia tego silnika to:
 - obsługiwanie przez server, jest to de facto ( i ma być ) jedynie klient
 - musi być napisany w C++ ( z domieszką C ), może tymczasowo kożystac z LUA ( ale to raczej server )
 
-Należy zainstalować zależności a następnie ( na Linuxie na razie tylko ) wywołać w terminalu polecenie:
+
+
+Należy zainstalować wszystkie zależności( instrukcja niżej w sekcji Zależności ) a następnie wywołać w terminalu polecenie( z folderu głównego Yave ):
 ```
-make all
+cmake -S . -B .
 ```
 później po każdej zmianie w kodzie wystarczy użyć polecenia:
 ```
-make
+cmake --build .
 ```
 
 ## Zależności:
 ### [Fedora 37](readme-fedora.md)
 ### [Manjaro](readme-manjaro.md)
+### [Windows 10](readme-windows.md)
+
 
 ### Ogólnie
 - glad

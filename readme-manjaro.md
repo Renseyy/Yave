@@ -1,4 +1,9 @@
 ## instrukcja dla Manjaro
+- cmake
+```
+sudo pacman -S cmake
+```
+
 - glad - zobacz README.md w folderze .local lub postępuj zgodnie z "Setting up GLAD" na stronie : 
 
 https://learnopengl.com/Getting-started/Creating-a-window
