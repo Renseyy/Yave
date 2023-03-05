@@ -8,7 +8,6 @@ all rights reserved
 #include <iostream>
 #include <string>
 #include <cmath>
-#include <filesystem>
 //glad
 #include <glad/glad.h>
 //glfw
@@ -34,7 +33,6 @@ all rights reserved
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-typedef unsigned int uint;
 
 //functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -158,7 +156,7 @@ int main()
     -0.5f,  0.5f,  0.5f,  0.0f, 0.0f  // bottom-left        
 };
     const uint OBIECT_NUM = 1;
-    Block cubePositions[] = {
+   /* Block cubePositions[] = { //coś tu nie działa: sorry, unimplemented: non-trivial designated initializers not supported
         {
             position:{0.0f,-0.5f,0.0f},
             rotation: 1,
@@ -177,7 +175,7 @@ int main()
         }
         
         
-    };
+    };*/
 
 
     uint VBO, VAO;
@@ -266,9 +264,9 @@ int main()
 	// load models
 	// -----------
     cout<<"loading model..."<<endl;
-    Model ourModel(filesystem::path("models/cube.glb"));
-	//Model ourModel(filesystem::path("animations/Ymca_Dance/Ymca_Dance.dae"));
-	//Animation danceAnimation(filesystem::path("animations/Ymca_Dance/Ymca_Dance.dae"),&ourModel);
+    Model ourModel("models/cube.glb");
+	//Model ourModel("animations/Ymca_Dance/Ymca_Dance.dae");
+	//Animation danceAnimation("animations/Ymca_Dance/Ymca_Dance.dae",&ourModel);
     //Animator animator(&danceAnimation);
     cout<<"loaded"<<endl;
 

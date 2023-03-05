@@ -10,8 +10,13 @@ Główne założenia tego silnika to:
 
 
 Należy zainstalować wszystkie zależności( instrukcja niżej w sekcji Zależności ) a następnie wywołać w terminalu polecenie( z folderu głównego Yave ):
+- na linuxie
 ```
 cmake -S . -B .
+```
+- na windowsie:
+```
+cmake -S . -B build -G "MinGW Makefiles"
 ```
 później po każdej zmianie w kodzie wystarczy użyć polecenia:
 ```

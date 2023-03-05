@@ -1,6 +1,8 @@
 #ifndef GLOBAL_OBJECTS_H
 #define GLOBAL_OBJECTS_H
 
+typedef unsigned int uint;
+typedef unsigned char u_char;
 
 //####################### settings ##################
 #define YAVE_x_speed 2.5f //velocity of camera in x axis

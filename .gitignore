@@ -11,3 +11,5 @@ Makefile
 CMakeCache.txt
 libYaveAll.a
 glfw3.dll
+build/
+additional/glad/src
