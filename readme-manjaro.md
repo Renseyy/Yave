@@ -4,8 +4,7 @@
 sudo pacman -S cmake
 ```
 ***
-- glad - zobacz README.md (nierekomendowane) aby użyć skompilowanego glada
- w folderze additional/glad/linux/.local lub postępuj zgodnie z "Setting up GLAD" na stronie( rekomendowane ) : 
+- glad - zobacz README.md  w folderze `additional/glad/linux/.local` (nierekomendowane) aby użyć skompilowanego glada lub postępuj zgodnie z "Setting up GLAD" na stronie( rekomendowane ) : 
 
 https://learnopengl.com/Getting-started/Creating-a-window
 
@@ -23,38 +22,28 @@ cmake -S . -B build
 cmake --build build
 ```
 9. jeśli nie wystąpiły błędy to powinien się pojawić folder `build`, a w nim plik **libglad.a** - należy go przekopiować do folderu: `/usr/lib`
+
 ***
+
 - glfw3 i glm
 
 ```
 sudo pacman -S glfw-wayland
 sudo pacman -S glm
 ```
+
 ***
+
 - stb-image.h
 ```
 git clone https://github.com/nothings/stb.git
 sudo cp stb/stb_image.h /usr/local/include/
 ```
+
 ***
+
 - assimp
 ```
 sudo dnf install assimp-devel
 ```
 ***
-- dodatkowe
-aby kompilować na windowsa potrzebujesz mingw
-```
-sudo pacman -S mingw-w64
-```
-
-prawdopodobnie ukaże się 5 pakietów do wyboru,
-domyślnie zostaną zainstalowane wszystkie:
-```
-mingw-w64-binutils
-mingw-w64-crt
-mingw-w64-gcc
-mingw-w64-headers
-mingw-w64-winpthreads
-
-```

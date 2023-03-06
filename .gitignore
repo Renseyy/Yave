@@ -13,3 +13,6 @@ libYaveAll.a
 glfw3.dll
 build/
 additional/glad/src
+libassimp-5.dll
+Yave.exe
+additional/glad/libglad.a

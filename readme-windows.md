@@ -8,12 +8,12 @@ wejdź na stronę https://cmake.org/download/ i pobierz installer cmake dla wind
 ***
 - MinGW
 
-możesz pobrać i zainstalować stąd: https://winlibs.com/ , wybierając najnowszą wersę (sprawdzona że działa: **URCT runtime - GCC 12.1.0: Win64**)
-po pobraniu i rozpakowaniu plików przenieś te pliki, najlepiej do C:\ i dodaj do zmiennej środowiskowej _PATH_ ścieżki:
+możesz pobrać i zainstalować stąd: https://winlibs.com/ , wybierając najnowszą wersę (sprawdzona że działa: **URCT runtime - 11.3.0: Win64**)
+po pobraniu i rozpakowaniu przenieś folder `mingw64`, najlepiej do C:\, zmień jego nazwę na `MinGW` i dodaj do zmiennej środowiskowej _PATH_ ścieżki:
 
  ```
- <miejsce instalacji MinGW>\mingw64\bin
- <miejsce instalacji MinGW>\mingw64\msys\1.0\bin
+ <miejsce instalacji MinGW>\MinGW\bin
+ <miejsce instalacji MinGW>\MinGW\msys\1.0\bin
  ```
 
 ***
@@ -85,4 +85,30 @@ może się jednak okazać że podczas próby kompilacji wystąpią błędy rodza
 undefined reference to `Assimp::Importer`
 ```
 wtedy należy:
-1. 
+1. pobrać assimpa (najlepiej najnowszego)
+2. rozpakować i wejść poprzez cmd do jego folderu, tak aby zobaczyć plik CMakeLists.txt
+3. wykonać komendę:
+```
+cmake -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -S . -B build -G "MinGW Makefiles"
+```
+jeśli wystąpią błedy za pierwszym razem ( `MinGW is too old to be supported` ) 
+**to należy wykonać po raz drugi bez zmieniania niczego**
+
+4. otwórz aplikację cmake, wybierz folder z punktu 2. i źródło: `<ten folder>\build`
+5. zaznacz flagę BUILD_SHARED_LIBS ( przy statycznej bibliotece z jakiegoś powodu występują błędy - prawdopodobnie bug zarówno w wersji 5.25 jak i 5.24 assimpa ) i upewnij się że flaga ASSIMP_BUILD_ZLIB jest włączona
+6. wciśnij configure a następnie generate
+7. przedź spowrotem do cmd i uruchom komendę:
+```
+cmake --build build
+```
+te polecenie jeśli wszystko będzie dobrze to trochę potrwa ( dobry czas na kawusię ;) )
+
+8. skopiuj plik **libassimp.dll.a** z folderu `build\lib`
+9. skopiuj folder `assimp` z folderu `include` do:
+`<miejsce instalacji MinGW>\MinGW\include`
+10. dołącz do tego miejsca ( `<miejsce instalacji MinGW>\MinGW\include\assimp` ) plik **config.h** z folderu `build\include`
+11. skopiuj plik **libassimp-5.dll** z folderu `build\bin` do folderu głównego _Yave_ lub gdziekolwiek będziesz uruchamiać **Yave.exe**
+
+***
+
+Jeśli wykonałeś powyższe kroki to **gratuluję** i możesz wrócić do [ README głównego ](README.md), aby się dowiedzieć w jaki sposób kompilować projekt

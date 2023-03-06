@@ -6,7 +6,7 @@ project(YAVE)
 
 #SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++20 ")
 #SET(GCC_COVERAGE_LINK_FLAGS "-lglad -lglfw -lGL -lm -lX11 -lpthread -lXrandr -lXi -ldl -l lib64 -lassimp")
-link_libraries(-lglfw3 -lopengl32 -lglu32 -lgdi32 -lglad -lassimp)
+link_libraries(-lglfw3 -lopengl32 -lglu32 -lgdi32 -lglad -lassimp.dll)
 file( GLOB_RECURSE LIB_SOURCES src/*.cpp )
 file( GLOB_RECURSE LIB_HEADERS lib/*.h )
 add_library( YaveAll ${LIB_SOURCES} ${LIB_HEADERS} )
