@@ -4,7 +4,7 @@
 sudo pacman -S cmake
 ```
 ***
-- glad - zobacz README.md  w folderze `additional/glad/linux/.local` (nierekomendowane) aby użyć skompilowanego glada lub postępuj zgodnie z "Setting up GLAD" na stronie( rekomendowane ) : 
+- glad - zobacz [README.md](additional/linux/REDME.md)  w folderze `additional/linux` (nierekomendowane) aby użyć skompilowanego glada lub postępuj zgodnie z "Setting up GLAD" na stronie( rekomendowane ) : 
 
 https://learnopengl.com/Getting-started/Creating-a-window
 

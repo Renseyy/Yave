@@ -2,6 +2,16 @@
 
 uprzedzam że skonfigurowanie aby wszystko zadziałało na windowsie jest zasadniczo dłuższe niż na Linuxie więc zachęcam do korzystania jednak z Linuxa ;)
 ***
+Można proces konfiguracji spróbować znacznie przyspieszyć korzystając z *dodatkowych zasobów* ( folder: `additional/windows` )
+Jest tam link w którym znajdują się sprawdzone wersje poniższych zależności, a także skompilowane już biblioteki.
+
+**Można również spróbować skorzystać z skryptu setup.bat** wcześniej pobierając wszystkie te biblioteki
+
+Jeśli pomimo tych zabiegów będą wyskakiwały błedy / z jakiegoś powodu nie będzie się dało skompilować projektu to
+należy wykonać poniższe kroki aby zainstalować zależności.
+
+*starałem się jak najlepiej ten proces opisać, jeśli jednak zauważysz że czegoś brakuje lub jest niejasne to śmiało daj znać*
+***
 - cmake
 
 wejdź na stronę https://cmake.org/download/ i pobierz installer cmake dla windowsa ( prawdopodobnie rozszerzenie *msi ) i zainstaluj
@@ -111,4 +121,4 @@ te polecenie jeśli wszystko będzie dobrze to trochę potrwa ( dobry czas na ka
 
 ***
 
-Jeśli wykonałeś powyższe kroki to **gratuluję** i możesz wrócić do [ README głównego ](README.md), aby się dowiedzieć w jaki sposób kompilować projekt
+Jeśli wykonałeś powyższe kroki to **szczerzę gratuluję** i możesz wrócić do [ README głównego ](README.md), aby się dowiedzieć w jaki sposób kompilować projekt
