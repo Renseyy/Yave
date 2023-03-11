@@ -1,4 +1,4 @@
-## instrukcja dla Windowsa 10
+## Instrukcja dla Windowsa 10
 
 uprzedzam że skonfigurowanie aby wszystko zadziałało na windowsie jest zasadniczo dłuższe niż na Linuxie więc zachęcam do korzystania jednak z Linuxa ;)
 ***

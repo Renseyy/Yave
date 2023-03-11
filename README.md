@@ -16,7 +16,7 @@ cmake -S . -B .
 ```
 - na windowsie:
 ```
-cmake -S . -B build -G "MinGW Makefiles"
+cmake -S . -B . -G "MinGW Makefiles"
 ```
 później po każdej zmianie w kodzie wystarczy użyć polecenia:
 ```

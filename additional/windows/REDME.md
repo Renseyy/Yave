@@ -8,8 +8,10 @@ Uwaga wstępna: dodatkowe zasoby zostały umieszczone na dysku google a nie w gi
 
 Aby użyć dodatkowych zasobów dla *Windowsa* ( takich jak skompilowane biblioteki itp ) należy je najpierw pobrać z
  [tej](https://drive.google.com/drive/folders/19Eq9odwMRxMV4-nfNJ2w9UY0d7Hvx44y?usp=sharing) strony.
+ 
+ Można łatwo pobrać wszystkie zasoby pobierając gotowego zipa: **windows.zip**
 
-następnie należy rozpakować pobrane zasoby do tego folderu gdzie obecnie jesteś( tak aby się znajdowały w folderze `windows` )
+następnie należy rozpakować pobrane zasoby do tego folderu gdzie obecnie jesteś( tak aby się znajdowały w folderze `additional/windows` a nie `additional/windows/windows` )
 
 ***
 
