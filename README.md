@@ -73,7 +73,7 @@ https://github.com/assimp/assimp/blob/master/Build.md
 
 najpierw potrzebny Cmake
 
-Assimp:
+Assimp :
 ```
 git clone https://github.com/assimp/assimp.git
 cd assimp
@@ -102,5 +102,5 @@ export LD_LIBRARY_PATH=/usr/local/lib64/
 ```
 można oczywiście powyższe polecenie dodać do pliku .bashrc aby nie musieć go wykonywać po każdym restarcie komputera
 
-
+Natomiast jeśli nadal najnowsza wersja nie będzie działać to można spróbować ze sprawdzoną - v5.2.4
 
