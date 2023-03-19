@@ -204,7 +204,7 @@ int main()
     unsigned char i=0; //nie marnujmy pamięci ;)
 
     //Textures
-    TextureManager textureManager;
+    /*TextureManager textureManager;
     textureManager.loadTextures({
         "textures/azalea_leaves.png",
         "textures/leaves.png",
@@ -218,7 +218,7 @@ int main()
         
         
     });
-    
+    */
     mode=YAVE_MODE_NORMAL;
     deltaTime=0.0f;
     lastFrame=0.0f;
@@ -257,15 +257,15 @@ int main()
 
 	// build and compile shaders
 	// -------------------------
-    Shader ourShader("shaders/models/model.vs", "shaders/models/model.fs");
+    //Shader ourShader("shaders/models/model.vs", "shaders/models/model.fs");
 	//Shader ourShader("shaders/animations/anim_model.vs", "shaders/animations/anim_model.fs");
-    //Shader groundShader("shaders/base.vertex.glsl", "shaders/base.fragment.glsl"); 
+    Shader ourShader("shaders/base.vertex.glsl", "shaders/base.fragment.glsl"); 
 	
 	// load models
 	// -----------
     cout<<"loading model..."<<endl;
-    Model ourModel("models/cube.glb");
-	//Model ourModel("animations/Ymca_Dance/Ymca_Dance.dae");
+    //Model ourModel("models/cube.glb");
+	Model ourModel("animations/Ymca_Dance/Ymca_Dance.dae");
 	//Animation danceAnimation("animations/Ymca_Dance/Ymca_Dance.dae",&ourModel);
     //Animator animator(&danceAnimation);
     cout<<"loaded"<<endl;
@@ -363,7 +363,7 @@ int main()
         
         view  = cam0.GetViewMatrix();
         
-        projection = glm::perspective(glm::radians(45.0f), YAVE_ratio , 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(45.0f), YAVE_ratio , 0.1f, 3000.0f);
 
 
         
@@ -374,10 +374,11 @@ int main()
         //auto transforms = animator.GetFinalBoneMatrices();
 		//for (int i = 0; i < transforms.size(); ++i)
 		//	ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
-
-
+        ourShader.setBool("Texturing", GL_FALSE);
+        ourShader.setVec4("color", glm::vec4(0.0, 1.0 , 0.0 , 1.0));
 		// render the loaded model
 		glm::mat4 model = glm::mat4(1.0f);
+        
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
 		//model = glm::scale(model, glm::vec3(.5f, .5f, .5f));	// it's a bit too big for our scene, so scale it down
 		ourShader.setMat4("model", model);

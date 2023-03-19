@@ -18,6 +18,14 @@ cmake -S . -B .
 ```
 cmake -S . -B . -G "MinGW Makefiles"
 ```
+
+### Jeśli chcesz korzystać z debugowania np za pomocą gdb to dodaj na końcu jeszcze:
+```
+-DCMAKE_BUILD_TYPE=Debug
+```
+
+
+
 później po każdej zmianie w kodzie wystarczy użyć polecenia:
 ```
 cmake --build .
