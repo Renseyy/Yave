@@ -26,6 +26,7 @@ cmake --build .
 ## Zależności:
 ### [Fedora 37](readme-fedora.md)
 ### [Manjaro](readme-manjaro.md)
+### [Mint](readme-mint.md)
 ### [Windows 10](readme-windows.md)
 
 
