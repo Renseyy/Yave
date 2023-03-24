@@ -34,7 +34,7 @@ void YAVE_keys_init(void){
 
 
 void YAVE_exec_keys(void){
-    if(mode==YAVE_MODE_NORMAL || mode==YAVE_MODE_BACKPACK){ 
+    if(YAVE_displayMode==YAVE_MODE_NORMAL || YAVE_displayMode==YAVE_MODE_BACKPACK){ 
         if(YAVE_keys[YAVE_KEY_UP].pressed) cam0.ProcessKeyboard(FORWARD,deltaTime);     
         if(YAVE_keys[YAVE_KEY_DOWN].pressed) cam0.ProcessKeyboard(BACKWARD,deltaTime);
         if(YAVE_keys[YAVE_KEY_RIGHT].pressed) cam0.ProcessKeyboard(RIGHT,deltaTime);
@@ -59,18 +59,18 @@ void YAVE_exec_keys(void){
  
         if(YAVE_keys[YAVE_KEY_TAB].pressed){
             if(!mode_block){
-                if(mode==YAVE_MODE_NORMAL){
+                if(YAVE_displayMode==YAVE_MODE_NORMAL){
                     firstMouse = true;
                     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);    
-                    mode=YAVE_MODE_MOUSE;
+                    YAVE_displayMode=YAVE_MODE_MOUSE;
                 }
-                else if(mode == YAVE_MODE_MOUSE){
+                else if(YAVE_displayMode == YAVE_MODE_MOUSE){
                     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-                    mode=YAVE_MODE_BACKPACK;
+                    YAVE_displayMode=YAVE_MODE_BACKPACK;
                 }
-                else if(mode == YAVE_MODE_BACKPACK){
+                else if(YAVE_displayMode == YAVE_MODE_BACKPACK){
                     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-                    mode=YAVE_MODE_NORMAL;
+                    YAVE_displayMode=YAVE_MODE_NORMAL;
                 }   //może być w przyszłości więcej trybów
                 mode_block=true;
             }
@@ -102,7 +102,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 //XD
 void mouse_callback(GLFWwindow* window, double xpos, double ypos){
-    if(mode==YAVE_MODE_NORMAL){
+    if(YAVE_displayMode==YAVE_MODE_NORMAL){
     if (firstMouse) //ustaw poczatkowe parametry
     {
         lastX = xpos;

@@ -25,11 +25,27 @@ cmake -S . -B . -G "MinGW Makefiles"
 ```
 
 
-
 później po każdej zmianie w kodzie wystarczy użyć polecenia:
 ```
 cmake --build .
 ```
+
+### Animacje
+
+Aby użyć animacji:
+
+1. w main() przed *render loop*:
+- zmień **Shader** na shader dla animacji: 
+```
+Shader <nazwa_shadera>("shaders/animations/anim_model.vs", "shaders/animations/anim_model.fs");
+```
+- ustaw **Model** ***nazwa_modelu*** na ten, który ma być animowany ( zazwyczaj po prostu plik animacji )
+- ustaw **Animation** ***nazwa_animacji*** na plik animacji
+- ustaw **Animator** ***nazwa_animatora*** na adres twojej animacji `&<nazwa_animacji>`
+2. w pętli render:
+- przygotuj do renderowania: `YAVE_prepareRender(&<nazwa_shadera>);`
+- wykonaj klatke animacji i przygotuj do wyrysowania: `YAVE_execAnimation(&<nazwa_animatora>,&<nazwa_shadera>);`
+- wyrenderuj model: `YAVE_renderModel(&<nazwa_shadera>,&<nazwa_modelu>);`
 
 ## Zależności:
 ### [Fedora 37](readme-fedora.md)

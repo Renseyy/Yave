@@ -15,6 +15,8 @@
 #include <vector>
 #include <iostream>
 
+#include "../global.h"
+
 #define YAVE_FLASH 3.0f //how many faster should it go
 #define YAVE_KEY_MAPPED 8 //number of mapped keys
 
