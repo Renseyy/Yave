@@ -34,14 +34,14 @@ int main()
 
 	// build and compile shaders
 	// -------------------------
-	Shader ourShader("shaders/animations/anim_model.vs", "shaders/animations/anim_model.fs"); //dla animacji
-    //Shader ourShader("shaders/base.vertex.glsl", "shaders/base.fragment.glsl"); //nie dla animacji
+	//Shader ourShader("shaders/animations/anim_model.vs", "shaders/animations/anim_model.fs"); //dla animacji
+    Shader ourShader("shaders/base.vertex.glsl", "shaders/base.fragment.glsl"); //nie dla animacji
 	
 	// load models
 	// -----------
     cout<<"loading model..."<<endl;
-    //Model ourModel("models/cube.glb");
-	Model ourModel("animations/Ymca_Dance.glb");
+    Model ourModel("models/cube.glb");
+	//Model ourModel("animations/Ymca_Dance.glb");
 
 	Animation danceAnimation("animations/Ymca_Dance.glb",&ourModel);
     Animator animator(&danceAnimation);
@@ -53,7 +53,7 @@ int main()
     {
         YAVE_prepareRender(&ourShader);
 
-        YAVE_execAnimation(&animator,&ourShader);
+        //YAVE_execAnimation(&animator,&ourShader);
         
         YAVE_renderModel(&ourShader,&ourModel);
         

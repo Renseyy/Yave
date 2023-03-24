@@ -72,7 +72,7 @@ void YAVE_execAnimation(Animator * animator,Shader * shader){
 }
 
 void YAVE_renderModel(Shader *shader, Model *renderedModel){
-    shader->setBool("Texturing", GL_FALSE);
+    shader->setBool("Texturing", GL_TRUE);
     shader->setVec4("color", glm::vec4(0.0, 1.0 , 0.0 , 1.0));
 	// render the loaded model
 	glm::mat4 model = glm::mat4(1.0f);
