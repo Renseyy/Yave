@@ -21,13 +21,13 @@ albo po prostu użyć tych zasobów aby skonfigurować sprawdzoną wersję.
 
 ### Opis poszczególnych folderów
 
-- cmake - zawiera installer do cmake *.msi
-- MinGW - zawiera mingw URCT runtime - 11.3.0: Win64
+- cmake - zawiera installer do cmake ***.msi**
+- MinGW - zawiera mingw **URCT runtime - 11.3.0: Win64**
 - glad - zawiera foldery: `include` i `src` domyślnie dostępne w gladzie oraz folder `lib` z przekompilowaną biblioteką
-- GLFW - zawiera glfw 3.3.8 na win64
-- glm - zawiera sam folder bibliotek do glm ( należy go dać do folderu include zgodnie z readme-windows.md )
+- GLFW - zawiera glfw **3.3.8** na **win64**
+- glm **0.9.9**- zawiera sam folder bibliotek do glm ( należy go dać do folderu include zgodnie z readme-windows.md )
 - stb_image - zawiera plik stb_image.h
-- assimp - znajdują się tam dwa foldery i plik:
+- assimp **v5.2.4**- znajdują się tam dwa foldery i plik:
     1. `include` - zawiera folder `assimp/` który należy przekopiować do MinGW/include ( zobacz readme-windows )
     **! Uwaga plik config.h jest już tam zawarty !**
     2. `lib` - zawiera bibliotekę do kompilowania z użyciem biblioteki współdzielonej ( wrzucić do MinGW/lib )
