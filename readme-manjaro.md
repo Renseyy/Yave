@@ -47,3 +47,9 @@ sudo cp stb/stb_image.h /usr/local/include/
 sudo dnf install assimp-devel
 ```
 ***
+
+-irrklang
+1. należy pobrać irrKlang ze strony https://www.ambiera.com/irrklang/downloads.html
+2. rozpakować
+3. z folderu `bin/linux-gcc-64` skopiować pliki do `/usr/lib`
+4. z folderu `include` skopiować pliki do folderu `/usr/lib/irrklang`, jeśli nie istnieje - utworzyć

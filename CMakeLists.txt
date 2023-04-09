@@ -5,7 +5,7 @@ project(YAVE)
 IF(WIN32)
 link_libraries(-lglfw3 -lopengl32 -lglu32 -lgdi32 -lglad -lassimp.dll)
 ELSE()
-link_libraries(-lglad -lglfw -lGL -lm -lX11 -lpthread -lXrandr -lXi -ldl -lassimp)
+link_libraries(-lglad -lglfw -lGL -lm -lX11 -lpthread -lXrandr -lXi -ldl -lassimp -lIrrKlang)
 ENDIF()
 
 #select all files under lib/ and src/

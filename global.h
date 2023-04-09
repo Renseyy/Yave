@@ -22,6 +22,10 @@ This is the file to hold all global includes and varialibes that should be acces
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+//audio
+#include <irrklang/irrKlang.h>
+
 //custom libs
 #include "lib/global_objects.h"
 #include "lib/Shader.h"
@@ -33,6 +37,7 @@ This is the file to hold all global includes and varialibes that should be acces
 
 //texture manager - to update
 #include "lib/TextureManager.h"
+
 
 
 

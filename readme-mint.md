@@ -80,3 +80,9 @@ czyli np:
 export LD_LIBRARY_PATH=/usr/local/lib64/
 ```
 można oczywiście powyższe polecenie dodać do pliku .bashrc aby nie musieć go wykonywać po każdym restarcie komputera
+
+-irrklang
+1. należy pobrać irrKlang ze strony https://www.ambiera.com/irrklang/downloads.html
+2. rozpakować
+3. z folderu `bin/linux-gcc-64` skopiować pliki do `/usr/lib`
+4. z folderu `include` skopiować pliki do folderu `/usr/lib/irrklang`, jeśli nie istnieje - utworzyć
