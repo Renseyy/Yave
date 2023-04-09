@@ -52,4 +52,5 @@ sudo dnf install assimp-devel
 1. należy pobrać irrKlang ze strony https://www.ambiera.com/irrklang/downloads.html
 2. rozpakować
 3. z folderu `bin/linux-gcc-64` skopiować pliki do `/usr/lib`
-4. z folderu `include` skopiować pliki do folderu `/usr/lib/irrklang`, jeśli nie istnieje - utworzyć
+4. z folderu `include` skopiować pliki do folderu `/usr/include/irrklang`, jeśli nie istnieje - utworzyć
+5. z katalogu examples/common do folderu `/usr/include` skopiuj też plik **conio.h**

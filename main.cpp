@@ -16,7 +16,9 @@ all rights reserved
 // aby możliwie najbardziej zwiększyć czytelnosc kodu nalezy unikac pisania duzych fragmentow kodu w main()
 // zamiast tego mozna umieszczac wlasne funkcje w config i render i je wywolywac w main
 
-
+irrklang::vec3df vec3glm_toklang(glm::vec3 x){
+    return irrklang::vec3df(x.x,x.r,x.s);
+}
 
 
 int main()
@@ -52,8 +54,13 @@ int main()
     
     cout<<"loaded"<<endl;
     
-    sound->play2D("sound/YMCA.ogg", true); //NOTE: true - zapętla, false - bez zapętlenia
+    //sound->play2D("sound/YMCA.ogg", true); //NOTE: true - zapętla, false - bez zapętlenia
+    glm::vec3 musicPosition = glm::vec3(0,0,0);
+    irrklang::ISound* music = sound->play3D("sound/getout.ogg",irrklang::vec3df(0,0,0), true, false, true);
+    if (music)
+      music->setMinDistance(5.0f);
 
+    sound->setListenerPosition(irrklang::vec3df(0,0,0),irrklang::vec3df(0,0,1));
     //render loop
     while (!glfwWindowShouldClose(window))
     {
@@ -62,8 +69,10 @@ int main()
         YAVE_execAnimation(&animator,&ourShader);
         
         YAVE_renderModel(&ourShader,&ourModel);
-        
+        sound->setListenerPosition(vec3glm_toklang(cam0.Position),vec3glm_toklang(cam0.Front));
     }
+    if (music)
+      music->drop(); // release music stream.
     sound->drop(); // delete sound engine
     glfwTerminate();
 	return 0;

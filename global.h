@@ -11,6 +11,7 @@ This is the file to hold all global includes and varialibes that should be acces
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <conio.h>
 //glad
 #include <glad/glad.h>
 //glfw
