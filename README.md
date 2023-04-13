@@ -1,5 +1,12 @@
 # YAVE - Yet Another Voxel Engine
 
+---
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People%20with%20professions/Factory%20Worker%20Light%20Skin%20Tone.png" alt="Factory Worker Light Skin Tone" width="52" height="52" /> Obecnie trwają prace nad:
+### Renseyy:
+ - nowy manager tekstur
+ - połączenie z sol2 - lua
+
+---
 ### Testowy projekt mający na celu naukę OpenGL i shaderów (GLSL). Celem jest stworzenie silnika do gry Sylian.
 Główne założenia tego silnika to:
 - ładne wyglądanie, efekty świetlne i graficzne
