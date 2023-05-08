@@ -23,6 +23,13 @@ irrklang::vec3df vec3glm_toklang(glm::vec3 x){
 
 int main()
 {
+    std::cout.sync_with_stdio(false);
+    TextureManager manager;
+    manager.addTexture("textures/dirt.png");
+    manager.addTexture("textures/glass.png");
+    manager.addTexture("textures/oak.png");
+    manager.addTexture("textures/grenny.png");
+    manager.addTexture("textures/dirt.png");
     YAVE_initWindow();
     YAVE_configureImgui();
     YAVE_configureBuffers();

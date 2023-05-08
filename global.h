@@ -37,7 +37,7 @@ This is the file to hold all global includes and varialibes that should be acces
 #include "lib/YAVE_input.h"
 
 //texture manager - to update
-#include "lib/TextureManager.h"
+#include "lib/TextureManager.hpp"
 
 
 
@@ -46,6 +46,9 @@ This is the file to hold all global includes and varialibes that should be acces
 //***************************************** settings *******************************************
 const uint WIDTH = 800;
 const uint HEIGHT = 600;
+
+//?---------------------------------------- textrues -------------------------------------------
+
 
 //***************************************** functions ******************************************
 

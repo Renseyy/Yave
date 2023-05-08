@@ -12,6 +12,7 @@ ENDIF()
 set(YAVE_MAIN_FILES "main/config.h" "main/config.cpp" "main/render.h" "main/render.cpp")
 file( GLOB_RECURSE LIB_SOURCES src/*.cpp )
 file( GLOB_RECURSE LIB_HEADERS lib/*.h )
+file( GLOB_RECURSE LIB_HEADERS lib/*.hpp )
 add_library( YaveAll ${LIB_SOURCES} ${LIB_HEADERS} ${YAVE_MAIN_FILES} "global.h")
 
 add_executable( Yave main.cpp )
