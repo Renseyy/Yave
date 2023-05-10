@@ -2,7 +2,8 @@
 YAVE - by MAKOUS and KK
 all rights reserved
 */
-
+#define SOL_ALL_SAFETIES_ON 1
+#include "lib/sol/sol.hpp"
 //all global includes and varialibes
 #include "global.h"
 
@@ -13,75 +14,99 @@ all rights reserved
 //main files
 #include "main/config.h"
 #include "main/render.h"
-// aby możliwie najbardziej zwiększyć czytelnosc kodu nalezy unikac pisania duzych fragmentow kodu w main()
-// zamiast tego mozna umieszczac wlasne funkcje w config i render i je wywolywac w main
 
 irrklang::vec3df vec3glm_toklang(glm::vec3 x){
     return irrklang::vec3df(x.x,x.r,x.s);
 }
 
+#include <fstream>
 
+#include "lib/lua/eventMachine.hpp"
+// aby możliwie najbardziej zwiększyć czytelnosc kodu nalezy unikac pisania duzych fragmentow kodu w main()
+// zamiast tego mozna umieszczac wlasne funkcje w config i render i je wywolywac w main
+
+
+
+sol::state lua;
 int main()
 {
+
     std::cout.sync_with_stdio(false);
+
+    //? BEGIN LUA
+    sol::state lua;
+    
+    //? Load common packages 
+    lua.open_libraries(sol::lib::base, sol::lib::package);
+    
+    //? Create new core
+    EventMachine machine(&lua);
+    initLuaTypes(&lua);
+    lua.set_function("on", &EventMachine::addEventListener, &machine);
+    //? Run main.lua
+    lua.script_file("lua/main.lua");
     TextureManager manager;
-    manager.addTexture("textures/dirt.png");
-    manager.addTexture("textures/glass.png");
-    manager.addTexture("textures/oak.png");
-    manager.addTexture("textures/grenny.png");
-    manager.addTexture("textures/dirt.png");
-    YAVE_initWindow();
-    YAVE_configureImgui();
-    YAVE_configureBuffers();
-    YAVE_configureView();
-    YAVE_configureInput();
 
-	stbi_set_flip_vertically_on_load(true);
+    InitEvent ev;
+    ev.textureManager = manager;
+    machine.dispatchEvent("init", &ev);
+    // manager.addTexture("textures/dirt.png");
+    // manager.addTexture("textures/glass.png");
+    // manager.addTexture("textures/oak.png");
+    // manager.addTexture("textures/grenny.png");
+    // manager.addTexture("textures/dirt.png");
+    // YAVE_initWindow();
+    // YAVE_configureImgui();
+    // YAVE_configureBuffers();
+    // YAVE_configureView();
+    // YAVE_configureInput();
+
+	// stbi_set_flip_vertically_on_load(true);
     
-    //sound
-    irrklang::ISoundEngine * sound = irrklang::createIrrKlangDevice();
+    // //sound
+    // irrklang::ISoundEngine * sound = irrklang::createIrrKlangDevice();
 
-    if(!sound){
-        cout<<"Sound Error <sad sound>"<<endl;
-        return 0;
-    }
-	// build and compile shaders
-	// -------------------------
-	Shader ourShader("shaders/animations/anim_model.vs", "shaders/animations/anim_model.fs"); //dla animacji
-    //Shader ourShader("shaders/base.vertex.glsl", "shaders/base.fragment.glsl"); //nie dla animacji
+    // if(!sound){
+    //     cout<<"Sound Error <sad sound>"<<endl;
+    //     return 0;
+    // }
+	// // build and compile shaders
+	// // -------------------------
+	// Shader ourShader("shaders/animations/anim_model.vs", "shaders/animations/anim_model.fs"); //dla animacji
+    // //Shader ourShader("shaders/base.vertex.glsl", "shaders/base.fragment.glsl"); //nie dla animacji
 	
-	// load models
-	// -----------
-    cout<<"loading model..."<<endl;
-    //Model ourModel("models/cube.glb");
-	Model ourModel("animations/Ymca_Dance/Ymca_Dance.dae");
+	// // load models
+	// // -----------
+    // cout<<"loading model..."<<endl;
+    // //Model ourModel("models/cube.glb");
+	// Model ourModel("animations/Ymca_Dance/Ymca_Dance.dae");
 
-	Animation danceAnimation("animations/Ymca_Dance/Ymca_Dance.dae",&ourModel);
-    Animator animator(&danceAnimation);
+	// Animation danceAnimation("animations/Ymca_Dance/Ymca_Dance.dae",&ourModel);
+    // Animator animator(&danceAnimation);
     
-    cout<<"loaded"<<endl;
+    // cout<<"loaded"<<endl;
     
-    //sound->play2D("sound/YMCA.ogg", true); //NOTE: true - zapętla, false - bez zapętlenia
-    glm::vec3 musicPosition = glm::vec3(0,0,0);
-    irrklang::ISound* music = sound->play3D("sound/getout.ogg",irrklang::vec3df(0,0,0), true, false, true);
-    if (music)
-      music->setMinDistance(5.0f);
+    // //sound->play2D("sound/YMCA.ogg", true); //NOTE: true - zapętla, false - bez zapętlenia
+    // glm::vec3 musicPosition = glm::vec3(0,0,0);
+    // irrklang::ISound* music = sound->play3D("sound/getout.ogg",irrklang::vec3df(0,0,0), true, false, true);
+    // if (music)
+    //   music->setMinDistance(5.0f);
 
-    sound->setListenerPosition(irrklang::vec3df(0,0,0),irrklang::vec3df(0,0,1));
-    //render loop
-    while (!glfwWindowShouldClose(window))
-    {
-        YAVE_prepareRender(&ourShader);
+    // sound->setListenerPosition(irrklang::vec3df(0,0,0),irrklang::vec3df(0,0,1));
+    // //render loop
+    // while (!glfwWindowShouldClose(window))
+    // {
+    //     YAVE_prepareRender(&ourShader);
 
-        YAVE_execAnimation(&animator,&ourShader);
+    //     YAVE_execAnimation(&animator,&ourShader);
         
-        YAVE_renderModel(&ourShader,&ourModel);
-        sound->setListenerPosition(vec3glm_toklang(cam0.Position),vec3glm_toklang(cam0.Front));
-    }
-    if (music)
-      music->drop(); // release music stream.
-    sound->drop(); // delete sound engine
-    glfwTerminate();
+    //     YAVE_renderModel(&ourShader,&ourModel);
+    //     sound->setListenerPosition(vec3glm_toklang(cam0.Position),vec3glm_toklang(cam0.Front));
+    // }
+    // if (music)
+    //   music->drop(); // release music stream.
+    // sound->drop(); // delete sound engine
+    // glfwTerminate();
 	return 0;
 }
 

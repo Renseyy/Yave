@@ -87,3 +87,6 @@ można oczywiście powyższe polecenie dodać do pliku .bashrc aby nie musieć g
 3. z folderu `bin/linux-gcc-64` skopiować pliki do `/usr/lib`
 4. z folderu `include` skopiować pliki do folderu `/usr/include/irrklang`, jeśli nie istnieje - utworzyć
 5. z katalogu examples/common do folderu `/usr/include` skopiuj też plik **conio.h**
+
+- LUA i sol2
+1. Zainstaluj dev lua `sudo apt install liblua5.3-dev`

@@ -11,7 +11,8 @@
 		"commands" : 
 		[
 			"add_executable",
-			"target_link_libraries"
+			"target_link_libraries",
+			"include_directories"
 		],
 		"files" : 
 		[
@@ -25,13 +26,19 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 18,
+				"line" : 19,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 20,
+				"line" : 21,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 8,
 				"parent" : 0
 			}
 		]
@@ -43,6 +50,13 @@
 			[
 				{
 					"fragment" : "-g"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 3,
+					"path" : "/usr/include/lua5.3"
 				}
 			],
 			"language" : "CXX",
@@ -128,6 +142,11 @@
 				"role" : "libraries"
 			},
 			{
+				"backtrace" : 1,
+				"fragment" : "-llua5.3",
+				"role" : "libraries"
+			},
+			{
 				"backtrace" : 2,
 				"fragment" : "libYaveAll.a",
 				"role" : "libraries"
@@ -185,6 +204,11 @@
 			{
 				"backtrace" : 1,
 				"fragment" : "-lIrrKlang",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "-llua5.3",
 				"role" : "libraries"
 			}
 		],
