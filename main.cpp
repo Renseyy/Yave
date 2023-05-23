@@ -2,9 +2,7 @@
 YAVE - by MAKOUS and KK
 all rights reserved
 */
-#define SOL_ALL_SAFETIES_ON 1
-#include "lib/sol/sol.hpp"
-//all global includes and varialibes
+
 #include "global.h"
 
 //stb - textures
@@ -20,36 +18,14 @@ irrklang::vec3df vec3glm_toklang(glm::vec3 x){
 }
 
 #include <fstream>
-
-#include "lib/lua/eventMachine.hpp"
 // aby możliwie najbardziej zwiększyć czytelnosc kodu nalezy unikac pisania duzych fragmentow kodu w main()
 // zamiast tego mozna umieszczac wlasne funkcje w config i render i je wywolywac w main
 
-
-
-sol::state lua;
+#include "lib/lone/main.hpp"
 int main()
 {
-
+    Lone::initLone();
     std::cout.sync_with_stdio(false);
-
-    //? BEGIN LUA
-    sol::state lua;
-    
-    //? Load common packages 
-    lua.open_libraries(sol::lib::base, sol::lib::package);
-    
-    //? Create new core
-    EventMachine machine(&lua);
-    initLuaTypes(&lua);
-    lua.set_function("on", &EventMachine::addEventListener, &machine);
-    //? Run main.lua
-    lua.script_file("lua/main.lua");
-    TextureManager manager;
-
-    InitEvent ev;
-    ev.textureManager = manager;
-    machine.dispatchEvent("init", &ev);
     // manager.addTexture("textures/dirt.png");
     // manager.addTexture("textures/glass.png");
     // manager.addTexture("textures/oak.png");

@@ -1,7 +1,11 @@
 --- MAIN.LUA
-local fun = on("init", function(e)
-    print(e)
+_init(function(e)
+
+end)
+on("init", function(e)
     local textureManager = e.getTextureManager();
     print(textureManager.addTexture)
     textureManager.addTexture("textures/dirt.png")
+
+    
 end)
