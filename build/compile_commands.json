@@ -1,0 +1,62 @@
+[
+{
+  "directory": "/home/renseyy/Pulpit/Yave/build",
+  "command": "/usr/bin/g++  -I/usr/include/lua5.3 -g -o CMakeFiles/YaveAll.dir/src/YAVE/SimplexNoise.cpp.o -c /home/renseyy/Pulpit/Yave/src/YAVE/SimplexNoise.cpp",
+  "file": "/home/renseyy/Pulpit/Yave/src/YAVE/SimplexNoise.cpp"
+},
+{
+  "directory": "/home/renseyy/Pulpit/Yave/build",
+  "command": "/usr/bin/g++  -I/usr/include/lua5.3 -g -o CMakeFiles/YaveAll.dir/src/YAVE/YAVE_input.cpp.o -c /home/renseyy/Pulpit/Yave/src/YAVE/YAVE_input.cpp",
+  "file": "/home/renseyy/Pulpit/Yave/src/YAVE/YAVE_input.cpp"
+},
+{
+  "directory": "/home/renseyy/Pulpit/Yave/build",
+  "command": "/usr/bin/g++  -I/usr/include/lua5.3 -g -o CMakeFiles/YaveAll.dir/src/imgui/imgui.cpp.o -c /home/renseyy/Pulpit/Yave/src/imgui/imgui.cpp",
+  "file": "/home/renseyy/Pulpit/Yave/src/imgui/imgui.cpp"
+},
+{
+  "directory": "/home/renseyy/Pulpit/Yave/build",
+  "command": "/usr/bin/g++  -I/usr/include/lua5.3 -g -o CMakeFiles/YaveAll.dir/src/imgui/imgui_demo.cpp.o -c /home/renseyy/Pulpit/Yave/src/imgui/imgui_demo.cpp",
+  "file": "/home/renseyy/Pulpit/Yave/src/imgui/imgui_demo.cpp"
+},
+{
+  "directory": "/home/renseyy/Pulpit/Yave/build",
+  "command": "/usr/bin/g++  -I/usr/include/lua5.3 -g -o CMakeFiles/YaveAll.dir/src/imgui/imgui_draw.cpp.o -c /home/renseyy/Pulpit/Yave/src/imgui/imgui_draw.cpp",
+  "file": "/home/renseyy/Pulpit/Yave/src/imgui/imgui_draw.cpp"
+},
+{
+  "directory": "/home/renseyy/Pulpit/Yave/build",
+  "command": "/usr/bin/g++  -I/usr/include/lua5.3 -g -o CMakeFiles/YaveAll.dir/src/imgui/imgui_impl_glfw.cpp.o -c /home/renseyy/Pulpit/Yave/src/imgui/imgui_impl_glfw.cpp",
+  "file": "/home/renseyy/Pulpit/Yave/src/imgui/imgui_impl_glfw.cpp"
+},
+{
+  "directory": "/home/renseyy/Pulpit/Yave/build",
+  "command": "/usr/bin/g++  -I/usr/include/lua5.3 -g -o CMakeFiles/YaveAll.dir/src/imgui/imgui_impl_opengl3.cpp.o -c /home/renseyy/Pulpit/Yave/src/imgui/imgui_impl_opengl3.cpp",
+  "file": "/home/renseyy/Pulpit/Yave/src/imgui/imgui_impl_opengl3.cpp"
+},
+{
+  "directory": "/home/renseyy/Pulpit/Yave/build",
+  "command": "/usr/bin/g++  -I/usr/include/lua5.3 -g -o CMakeFiles/YaveAll.dir/src/imgui/imgui_tables.cpp.o -c /home/renseyy/Pulpit/Yave/src/imgui/imgui_tables.cpp",
+  "file": "/home/renseyy/Pulpit/Yave/src/imgui/imgui_tables.cpp"
+},
+{
+  "directory": "/home/renseyy/Pulpit/Yave/build",
+  "command": "/usr/bin/g++  -I/usr/include/lua5.3 -g -o CMakeFiles/YaveAll.dir/src/imgui/imgui_widgets.cpp.o -c /home/renseyy/Pulpit/Yave/src/imgui/imgui_widgets.cpp",
+  "file": "/home/renseyy/Pulpit/Yave/src/imgui/imgui_widgets.cpp"
+},
+{
+  "directory": "/home/renseyy/Pulpit/Yave/build",
+  "command": "/usr/bin/g++  -I/usr/include/lua5.3 -g -o CMakeFiles/YaveAll.dir/main/config.cpp.o -c /home/renseyy/Pulpit/Yave/main/config.cpp",
+  "file": "/home/renseyy/Pulpit/Yave/main/config.cpp"
+},
+{
+  "directory": "/home/renseyy/Pulpit/Yave/build",
+  "command": "/usr/bin/g++  -I/usr/include/lua5.3 -g -o CMakeFiles/YaveAll.dir/main/render.cpp.o -c /home/renseyy/Pulpit/Yave/main/render.cpp",
+  "file": "/home/renseyy/Pulpit/Yave/main/render.cpp"
+},
+{
+  "directory": "/home/renseyy/Pulpit/Yave/build",
+  "command": "/usr/bin/g++  -I/usr/include/lua5.3 -g -o CMakeFiles/Yave.dir/main.cpp.o -c /home/renseyy/Pulpit/Yave/main.cpp",
+  "file": "/home/renseyy/Pulpit/Yave/main.cpp"
+}
+]
