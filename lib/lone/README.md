@@ -27,11 +27,12 @@ end
 ```
 [To samo w CSL:]
 ```CSL
-&engine: @getEngine()
+&engine: @getEngine
 &engine:preInit{
     &gui: ImGUI(){
         ImGUI::Button(){
             "Kliknij mnie"
+            
             :click{
                 @print "Kliknięto
             }
