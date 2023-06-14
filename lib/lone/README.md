@@ -25,6 +25,23 @@ engine._preinit = function(e)
 end
 
 ```
+[To samo w CSL:]
+```CSL
+&engine: @getEngine()
+&engine:preInit{
+    &gui: ImGUI(){
+        ImGUI::Button(){
+            "Kliknij mnie"
+            :click{
+                @print "Kliknięto
+            }
+        }
+        &button: ImGUI::Button()
+    }
+}
+```
+
+
 Struktura powyszego kodu:
 ```
 [Yave] engine
