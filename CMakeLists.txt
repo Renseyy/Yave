@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.26.4)
 
 if (POLICY CMP0048)
   cmake_policy(SET CMP0048 NEW)
@@ -6,21 +6,11 @@ endif (POLICY CMP0048)
 
 project(YAVE VERSION 1.0)
 
-IF(WIN32)
-link_libraries(-lopengl32 -lglu32 -lgdi32)
-ELSE()
-link_libraries(-lGL -lm -lX11 -lpthread -lXrandr -lXi -ldl -lIrrKlang)
-ENDIF()
+configure_file( version_config.h.in ${CMAKE_BINARY_DIR}/generated/version_config.h )
+set(VERSION_CONFIG_DIR ${CMAKE_BINARY_DIR}/generated/)
 
-#select all files under lib/ and src/
-set(YAVE_MAIN_FILES "main/config.h" "main/config.cpp" "main/render.h" "main/render.cpp")
-file( GLOB_RECURSE LIB_SOURCES src/*.cpp )
-file( GLOB_RECURSE LIB_HEADERS lib/*.h )
-add_library( YaveAll ${LIB_SOURCES} ${LIB_HEADERS} ${YAVE_MAIN_FILES} "global.h")
-
-add_executable( Yave main.cpp )
-
-
+#submodules
+#update
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 # Update submodules as needed
@@ -38,18 +28,48 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     endif()
 endif()
 
-#submodules
+#add
 add_subdirectory(external/glfw)
 add_subdirectory(external/glm)
 add_subdirectory(external/glad/cmake)
 add_subdirectory(external/assimp)
 
+#generate glad
+glad_add_library(glad46 API gl:core=4.6)
+
+set(YAVE_MAIN_FILES "main/config.h" "main/config.cpp" "main/render.h" "main/render.cpp")
+file( GLOB_RECURSE LIB_SOURCES src/*.cpp )
+file( GLOB_RECURSE LIB_HEADERS lib/*.h )
+add_library( YaveAll ${LIB_SOURCES} ${LIB_HEADERS} ${YAVE_MAIN_FILES} "global.h")
+
+
+add_executable( Yave main.cpp )
+
+#end of main files
+
+
+#add dependencies
+list(APPEND LIBS glfw)
+list(APPEND LIBS glm)
+list(APPEND LIBS glad46)
+list(APPEND LIBS assimp)
+
 list(APPEND EXTRA_INCLUDE_DIRS external/glfw/include)
 list(APPEND EXTRA_INCLUDE_DIRS external/glm)
+list(APPEND EXTRA_INCLUDE_DIRS external/glad)
 list(APPEND EXTRA_INCLUDE_DIRS external/assimp/include)
+list(APPEND EXTRA_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/external/assimp/include)
+list(APPEND EXTRA_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/gladsources/glad46/include)
 list(APPEND EXTRA_INCLUDE_DIRS external/stb)
 
-target_include_directories( Yave PUBLIC ${EXTRA_INCLUDE_DIRS} )
-target_include_directories( YaveAll PUBLIC ${EXTRA_INCLUDE_DIRS} )
+# conio.h
+IF(NOT WIN32)
+list(APPEND EXTRA_INCLUDE_DIRS external)
+ENDIF()
 
-target_link_libraries( Yave YaveAll glfw glm glad assimp) 
+target_include_directories( Yave PUBLIC ${EXTRA_INCLUDE_DIRS} ${VERSION_CONFIG_DIR})
+target_include_directories( YaveAll PUBLIC ${EXTRA_INCLUDE_DIRS} ${VERSION_CONFIG_DIR})
+
+target_link_libraries( YaveAll ${LIBS}) 
+target_link_libraries( Yave YaveAll) 
+

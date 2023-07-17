@@ -8,12 +8,13 @@ This is the file to hold all global includes and varialibes that should be acces
 
 //***************************************** includes *********************************************
 //basic libs
+
+#include <filesystem>
 #include <iostream>
 #include <string>
 #include <cmath>
-#include <conio.h>
 //glad
-#include <glad/glad.h>
+#include <glad/gl.h>
 //glfw
 #include <GLFW/glfw3.h>
 #include "lib/imgui/imgui.h"
@@ -25,7 +26,7 @@ This is the file to hold all global includes and varialibes that should be acces
 #include <glm/gtc/type_ptr.hpp>
 
 //audio
-#include <irrklang/irrKlang.h>
+//#include <irrklang/irrKlang.h>
 
 //custom libs
 #include "lib/global_objects.h"

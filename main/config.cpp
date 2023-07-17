@@ -46,7 +46,7 @@ u_char YAVE_initWindow(void){
     
     // glad: load all OpenGL function pointers
     // ---------------------------------------
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    if (!gladLoadGL(glfwGetProcAddress))
     {
         std::cout << "GLAD sie wykruszyl, biedaczysko..." << std::endl;
         return -1;

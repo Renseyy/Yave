@@ -1,0 +1,8 @@
+#ifndef VERSION_CONFIG_H
+#define VERSION_CONFIG_H
+
+//helpful to get direct directories
+#define YAVE_ROOT_DIR @CMAKE_SOURCE_DIR@
+
+
+#endif // VERSION_CONFIG_H

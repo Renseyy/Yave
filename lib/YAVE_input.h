@@ -2,7 +2,7 @@
 #define YAVE_INPUT_H
 
 //glad
-#include <glad/glad.h>
+#include <glad/gl.h>
 //glfw
 #include <GLFW/glfw3.h>
 //glm

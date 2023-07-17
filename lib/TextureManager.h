@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include <glad/glad.h>
+#include <glad/gl.h>
 #include <stb_image.h>
 using namespace std;
 class TextureManager{
