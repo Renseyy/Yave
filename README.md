@@ -9,15 +9,20 @@ Główne założenia tego silnika to:
 
 
 
-Należy zainstalować wszystkie zależności( instrukcja niżej w sekcji Zależności ) a następnie wywołać w terminalu polecenie( z folderu głównego Yave ):
-- na linuxie
+Należy zainstalować wszystkie zależności( instrukcja niżej w sekcji Zależności ) a następnie:
+- stworzyć jakiś folder w którym znajdą się utworzone pliki( np. **build** )
+- na linuxie z katalogu głównego Yave - tam gdzie **README**
 ```
-cmake -S . -B .
+cmake -S . -B <ścieżka do folderu na utworzone pliki>
+czyli np (kiedy utworzyliśmy folder build )
+cmake -S . -B build
 ```
 - na windowsie:
-```
-cmake -S . -B . -G "MinGW Makefiles"
-```
+
+Otworzyć program *cmake* jako źródło podać **katalog główny Yave**, a jako miejsce docelowe **folder na utworzone pliki**
+
+wcisnąć *configure*, a następnie *build*
+
 
 ### Jeśli chcesz korzystać z debugowania np za pomocą gdb to dodaj na końcu jeszcze:
 ```
@@ -27,8 +32,14 @@ cmake -S . -B . -G "MinGW Makefiles"
 
 później po każdej zmianie w kodzie wystarczy użyć polecenia:
 ```
-cmake --build .
+cmake --build <ścieżka do folderu na utworzone pliki>
+czyli np.
+cmake --build build
 ```
+
+To tyle!
+
+PS. Za pierwszym razem kompilacja może zająć długo
 
 ### Animacje
 
@@ -37,7 +48,7 @@ Aby użyć animacji:
 1. w main() przed *render loop*:
 - zmień **Shader** na shader dla animacji: 
 ```
-Shader <nazwa_shadera>("shaders/animations/anim_model.vs", "shaders/animations/anim_model.fs");
+Shader <nazwa_shadera>(DIRECT_DIR("shaders/animations/anim_model.vs"), DIRECT_DIR("shaders/animations/anim_model.fs"));
 ```
 - ustaw **Model** ***nazwa_modelu*** na ten, który ma być animowany ( zazwyczaj po prostu plik animacji )
 - ustaw **Animation** ***nazwa_animacji*** na plik animacji
@@ -48,15 +59,11 @@ Shader <nazwa_shadera>("shaders/animations/anim_model.vs", "shaders/animations/a
 - wyrenderuj model: `YAVE_renderModel(&<nazwa_shadera>,&<nazwa_modelu>);`
 
 ## Zależności:
-### [Fedora 37](readme-fedora.md)
-### [Manjaro](readme-manjaro.md)
-### [Mint](readme-mint.md)
-### [Windows 10](readme-windows.md)
-
 
 ### Ogólnie
-- glad
-- glfw3 i glm
-- stb-image.h
-- Assimp
-- irrKlang
+- cmake
+- openGL 4.0 lub wyższy
+
+A poza tym? 
+
+**Nie ma!** - no dobra są, ale cmake robi to za nas, nie musimy nic instalować a mamy najnowsze wersje ;)

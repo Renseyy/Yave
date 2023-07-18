@@ -6,6 +6,20 @@ endif (POLICY CMP0048)
 
 project(YAVE VERSION 1.0)
 
+#compile options
+option(USE_DIRECT "use direct paths instead of relative - good for testing, bad for sharing" ON)
+
+
+#option 1
+IF(USE_DIRECT)
+set(DIRECT_DIR_P "EXPAND(YAVE_ROOT_DIR)x")
+set(DIRECT_DIR "DIRECT_DIR_P(\"/\" x)")
+ELSE()
+set(DIRECT_DIR_P "x")
+set(DIRECT_DIR "DIRECT_DIR_P(x)")
+ENDIF()
+
+
 configure_file( version_config.h.in ${CMAKE_BINARY_DIR}/generated/version_config.h )
 set(VERSION_CONFIG_DIR ${CMAKE_BINARY_DIR}/generated/)
 
@@ -32,10 +46,16 @@ endif()
 add_subdirectory(external/glfw)
 add_subdirectory(external/glm)
 add_subdirectory(external/glad/cmake)
+
+# assimp options
+OPTION ( ASSIMP_INSTALL "" OFF )
+OPTION ( ASSIMP_WARNINGS_AS_ERRORS "" OFF )
+
 add_subdirectory(external/assimp)
 
+
 #generate glad
-glad_add_library(glad46 API gl:core=4.6)
+glad_add_library(glad API gl:core=4.0)
 
 set(YAVE_MAIN_FILES "main/config.h" "main/config.cpp" "main/render.h" "main/render.cpp")
 file( GLOB_RECURSE LIB_SOURCES src/*.cpp )
@@ -51,7 +71,7 @@ add_executable( Yave main.cpp )
 #add dependencies
 list(APPEND LIBS glfw)
 list(APPEND LIBS glm)
-list(APPEND LIBS glad46)
+list(APPEND LIBS glad)
 list(APPEND LIBS assimp)
 
 list(APPEND EXTRA_INCLUDE_DIRS external/glfw/include)
@@ -59,7 +79,7 @@ list(APPEND EXTRA_INCLUDE_DIRS external/glm)
 list(APPEND EXTRA_INCLUDE_DIRS external/glad)
 list(APPEND EXTRA_INCLUDE_DIRS external/assimp/include)
 list(APPEND EXTRA_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/external/assimp/include)
-list(APPEND EXTRA_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/gladsources/glad46/include)
+list(APPEND EXTRA_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/gladsources/glad/include)
 list(APPEND EXTRA_INCLUDE_DIRS external/stb)
 
 # conio.h

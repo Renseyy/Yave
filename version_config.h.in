@@ -3,6 +3,21 @@
 
 //helpful to get direct directories
 #define YAVE_ROOT_DIR @CMAKE_SOURCE_DIR@
+#define YAVE_BUILD_MODE @CMAKE_BUILD_TYPE@
+
+#define ADD_QUOTES(x) #x
+#define EXPAND(x) ADD_QUOTES(x)
+#define JOIN(x,y) x##y
+#define EXPAND_JOIN(x,y) JOIN(x,y)
+
+#define DIRECT_DIR_P(x) @DIRECT_DIR_P@
+#define DIRECT_DIR(x) @DIRECT_DIR@
+
+#if YAVE_BUILD_TYPE == Debug
+#define DEBUG_MODE 1
+#else
+#define DEBUG_MODE 0
+#endif
 
 
 #endif // VERSION_CONFIG_H
