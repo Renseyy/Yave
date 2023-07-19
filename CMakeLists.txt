@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26.4)
+cmake_minimum_required(VERSION 3.26.0)
 
 if (POLICY CMP0048)
   cmake_policy(SET CMP0048 NEW)
@@ -52,6 +52,19 @@ OPTION ( ASSIMP_INSTALL "" OFF )
 OPTION ( ASSIMP_WARNINGS_AS_ERRORS "" OFF )
 
 add_subdirectory(external/assimp)
+
+#install python requirements
+find_package(Python COMPONENTS Interpreter REQUIRED)
+
+# detect virtualenv and set Pip args accordingly
+if(DEFINED ENV{VIRTUAL_ENV} OR DEFINED ENV{CONDA_PREFIX})
+  set(_pip_args)
+else()
+  set(_pip_args "--user")
+endif()
+
+execute_process(COMMAND ${Python_EXECUTABLE} -m pip install -r ${CMAKE_SOURCE_DIR}/external/glad/requirements.txt)
+
 
 
 #generate glad
