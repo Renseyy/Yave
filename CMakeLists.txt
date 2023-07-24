@@ -20,6 +20,13 @@ set(DIRECT_DIR "DIRECT_DIR_P(x)")
 ENDIF()
 
 
+IF("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+set(DEBUG_MODE 1)
+ELSE()
+set(DEBUG_MODE 0)
+ENDIF()
+
+
 configure_file( version_config.h.in ${CMAKE_BINARY_DIR}/generated/version_config.h )
 set(VERSION_CONFIG_DIR ${CMAKE_BINARY_DIR}/generated/)
 
