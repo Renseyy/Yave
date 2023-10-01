@@ -53,6 +53,7 @@ endif()
 add_subdirectory(external/glfw)
 add_subdirectory(external/glm)
 add_subdirectory(external/glad/cmake)
+add_subdirectory(external/YAAL)
 
 # assimp options
 OPTION ( ASSIMP_INSTALL "" OFF )
@@ -93,6 +94,7 @@ list(APPEND LIBS glfw)
 list(APPEND LIBS glm)
 list(APPEND LIBS glad)
 list(APPEND LIBS assimp)
+list(APPEND LIBS YAAL)
 
 list(APPEND EXTRA_INCLUDE_DIRS external/glfw/include)
 list(APPEND EXTRA_INCLUDE_DIRS external/glm)
@@ -101,6 +103,7 @@ list(APPEND EXTRA_INCLUDE_DIRS external/assimp/include)
 list(APPEND EXTRA_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/external/assimp/include)
 list(APPEND EXTRA_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/gladsources/glad/include)
 list(APPEND EXTRA_INCLUDE_DIRS external/stb)
+list(APPEND EXTRA_INCLUDE_DIRS external/YAAL)
 
 # conio.h
 IF(NOT WIN32)

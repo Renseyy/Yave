@@ -43,7 +43,7 @@ void YAVE_renderBackground(void){
 }
 
 void YAVE_prepareRender(Shader * shader){
-    YAVE_executeEvents();
+    
     YAVE_adjustFPS((float)glfwGetTime());
     YAVE_renderBackground();
 
