@@ -6,6 +6,13 @@ This is the file to hold all global includes and varialibes that should be acces
 
 */
 
+// *** CONFIGURATION of filesystem ***
+
+#define YAVE_AMODEL_VS DIRECT_DIR("shaders/amodel.vs")
+#define YAVE_AMODEL_FS DIRECT_DIR("shaders/amodel.fs")
+#define YAVE_MODEL_VS DIRECT_DIR("shaders/model.vs")
+#define YAVE_MODEL_FS DIRECT_DIR("shaders/model.fs")
+
 //***************************************** includes *********************************************
 //basic libs
 

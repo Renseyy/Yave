@@ -9,9 +9,9 @@ Object::Object(){
 
 void Object::Init(void){
     if(isAnimated){
-        shader = new Shader(DIRECT_DIR("shaders/animations/anim_model.vs"), DIRECT_DIR("shaders/animations/anim_model.fs"));
+        shader = new Shader(YAVE_AMODEL_VS, YAVE_AMODEL_FS);
     }else{
-        shader = new Shader(DIRECT_DIR("shaders/base.vertex.glsl"),DIRECT_DIR("shaders/base.fragment.glsl"));
+        shader = new Shader(YAVE_MODEL_VS, YAVE_MODEL_FS);
     }
     model = new Model(ModelFile);
 

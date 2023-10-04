@@ -1,3 +1,5 @@
+//fragment shader for animations
+
 #version 400 core
 out vec4 FragColor;
 
