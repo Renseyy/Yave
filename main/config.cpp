@@ -10,7 +10,7 @@ float deltaTime;
 float lastFrame;
 u_char YAVE_displayMode;
  
-Camera cam0;
+Camera cam;
 float YAVE_ratio;
 
 
@@ -97,9 +97,9 @@ void YAVE_configureView(void){
     deltaTime=0.0f;
     lastFrame=0.0f;
 
-    cam0.Position=glm::vec3(0.0f,0.0f,4.0f);
-    cam0.MouseSensitivity=2.5f;
-    cam0.mode=CAM_DRONE;
+    cam.Position=glm::vec3(0.0f,0.0f,4.0f);
+    cam.MouseSensitivity=2.5f;
+    cam.mode=CAM_DRONE;
 }
 
 

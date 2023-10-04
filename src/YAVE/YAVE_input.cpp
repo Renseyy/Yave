@@ -35,26 +35,26 @@ void YAVE_keys_init(void){
 
 void YAVE_exec_keys(void){
     if(YAVE_displayMode==YAVE_MODE_NORMAL || YAVE_displayMode==YAVE_MODE_BACKPACK){ 
-        if(YAVE_keys[YAVE_KEY_UP].pressed) cam0.ProcessKeyboard(FORWARD,deltaTime);     
-        if(YAVE_keys[YAVE_KEY_DOWN].pressed) cam0.ProcessKeyboard(BACKWARD,deltaTime);
-        if(YAVE_keys[YAVE_KEY_RIGHT].pressed) cam0.ProcessKeyboard(RIGHT,deltaTime);
-        if(YAVE_keys[YAVE_KEY_LEFT].pressed) cam0.ProcessKeyboard(LEFT,deltaTime);
+        if(YAVE_keys[YAVE_KEY_UP].pressed) cam.ProcessKeyboard(FORWARD,deltaTime);     
+        if(YAVE_keys[YAVE_KEY_DOWN].pressed) cam.ProcessKeyboard(BACKWARD,deltaTime);
+        if(YAVE_keys[YAVE_KEY_RIGHT].pressed) cam.ProcessKeyboard(RIGHT,deltaTime);
+        if(YAVE_keys[YAVE_KEY_LEFT].pressed) cam.ProcessKeyboard(LEFT,deltaTime);
 
-        if(cam0.mode==CAM_DRONE){
+        if(cam.mode==CAM_DRONE){
             if(YAVE_keys[YAVE_KEY_SHIFT].pressed){
-                cam0.ProcessKeyboard(DOWNWARD,deltaTime);
+                cam.ProcessKeyboard(DOWNWARD,deltaTime);
             }
 
             if(YAVE_keys[YAVE_KEY_SPACE].pressed){
-                cam0.ProcessKeyboard(UPWARD,deltaTime);
+                cam.ProcessKeyboard(UPWARD,deltaTime);
             }
         }
 
         //flash
         if(YAVE_keys[YAVE_KEY_CTRL].pressed)
-            cam0.flash=YAVE_FLASH;
+            cam.flash=YAVE_FLASH;
         else
-            cam0.flash=1.0f;
+            cam.flash=1.0f;
     }
  
         if(YAVE_keys[YAVE_KEY_TAB].pressed){
@@ -113,6 +113,6 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos){
     yoffset=lastY-ypos;
         lastX = xpos;
         lastY = ypos;
-    cam0.ProcessMouseMovement(xoffset*deltaTime,yoffset*deltaTime,true);
+    cam.ProcessMouseMovement(xoffset*deltaTime,yoffset*deltaTime,true);
     }
 } 

@@ -14,6 +14,8 @@ all rights reserved
 #include "main/config.h"
 #include "main/render.h"
 
+#include <Object.h>
+#include <Listener.h>
 //YAAL
 #include <Sound.h>
 // aby możliwie najbardziej zwiększyć czytelnosc kodu nalezy unikac pisania duzych fragmentow kodu w main()
@@ -32,54 +34,35 @@ int main()
     
     Sound_CreateListener();
     
-    
-	// build and compile shaders
-	// -------------------------
-	Shader ourShader(DIRECT_DIR("shaders/animations/anim_model.vs"), DIRECT_DIR("shaders/animations/anim_model.fs")); //dla animacji
-    //Shader ourShader(DIRECT_DIR("shaders/base.vertex.glsl"),DIRECT_DIR("shaders/base.fragment.glsl")); //nie dla animacji
-    // load models
-	// -----------
-    cout<<"loading model..."<<endl;
-    //Model ourModel(DIRECT_DIR("models/cube.glb"));
-	Model ourModel(DIRECT_DIR("animations/Ymca_Dance/Ymca_Dance.dae"));
+    Object obj1,obj2;
+    obj1.isAnimated=true;
+    obj1.ModelFile=DIRECT_DIR("animations/Ymca_Dance/Ymca_Dance.dae");
 
-	Animation danceAnimation(DIRECT_DIR("animations/Ymca_Dance/Ymca_Dance.dae"),&ourModel);
-    Animator animator(&danceAnimation);
-    
-    std::cout<<"loaded"<<std::endl;
-    Sound npc;
-    npc.Open(DIRECT_DIR("music/YMCA.wav"));
-    npc.CreateSource();
-    npc.Play();
+    obj1.AnimationFile=DIRECT_DIR("animations/Ymca_Dance/Ymca_Dance.dae");
+    obj1.SoundFile=DIRECT_DIR("music/YMCA.wav");
+    obj1.position={0.0f,0.0f,-12.0f};
+    obj1.Init();
+
+    obj2.noSound=true;
+    obj2.ModelFile=DIRECT_DIR("models/cube.glb");
+    obj2.position={1.0f,1.0f, -4.0f};
+    obj2.Init();
+
+    obj1.sound->Play();
 
     while (!glfwWindowShouldClose(window))
     {
-        npc.Update();
-        
-        float x=cam0.Position[0];
-        float y=cam0.Position[1];
-        float z=cam0.Position[2];
-
-        float * orientation;
-        orientation=new float[6];
-
-        for(int v=0;v<3;v++){
-            orientation[v]=cam0.Up[v];
-            orientation[v+3]=-cam0.Front[v];
-        }
-        
-        float o_y=cam0.Position[1];
-        float o_z=cam0.Position[2];
-        Sound_SetListenerPosition(x,y,z);
-        Sound_SetListenerOrientation(orientation);
         YAVE_executeEvents();
-        YAVE_prepareRender(&ourShader);
+        YAVE_prepareRender();
 
-        YAVE_execAnimation(&animator,&ourShader);
-        
-        YAVE_renderModel(&ourShader,&ourModel);
-      
+        UpdateListener();
+
+        obj1.Render();
+        obj2.Render();
     }
+
+    
+
     Sound_DeleteListener();
     glfwTerminate();
 	return 0;

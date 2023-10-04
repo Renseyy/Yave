@@ -2,7 +2,7 @@
 
 #include "../global.h"
 
-extern Camera cam0;
+extern Camera cam;
 
 u_char YAVE_initWindow(void);
 void YAVE_configureImgui(void);

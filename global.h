@@ -61,7 +61,7 @@ extern float lastFrame;
 extern u_char YAVE_displayMode; 
 
 
-extern Camera cam0;
+extern Camera cam;
 extern float YAVE_ratio;
 
 

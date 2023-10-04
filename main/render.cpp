@@ -42,25 +42,11 @@ void YAVE_renderBackground(void){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void YAVE_prepareRender(Shader * shader){
+void YAVE_prepareRender(void){
     
     YAVE_adjustFPS((float)glfwGetTime());
     YAVE_renderBackground();
 
-    shader->use();
-
-	view          = glm::mat4(1.0f);
-    projection    = glm::mat4(1.0f);
-    model         = glm::mat4(1.0f);
-
-    projection = glm::perspective(glm::radians(45.0f), YAVE_ratio , 0.1f, 3000.0f);
-
-
-    view  = cam0.GetViewMatrix();
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
-
-    shader->setMat4("projection", projection);
-    shader->setMat4("view", view);
 }
 
 
@@ -77,7 +63,7 @@ void YAVE_renderModel(Shader *shader, Model *renderedModel){
 	// render the loaded model
 	glm::mat4 model = glm::mat4(1.0f);
         
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -12.0f)); // translate it down so it's at the center of the scene
 	//model = glm::scale(model, glm::vec3(.5f, .5f, .5f));	// it's a bit too big for our scene, so scale it down
 	shader->setMat4("model", model);
 	renderedModel->Draw(*shader);

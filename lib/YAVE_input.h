@@ -22,7 +22,7 @@
 
 extern bool firstMouse;
 extern bool mode_block;
-extern Camera cam0;
+extern Camera cam;
 struct YAVE_key{
 uint binding;
 u_char status;

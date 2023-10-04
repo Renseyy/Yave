@@ -72,6 +72,8 @@ Shader <nazwa_shadera>(DIRECT_DIR("shaders/animations/anim_model.vs"), DIRECT_DI
 ### Ogólnie
 - cmake
 - python
+- pip
+- openal
 
 A poza tym? 
 
@@ -84,18 +86,21 @@ A poza tym?
 sudo pacman -S cmake
 sudo pacman -S python3
 sudo pacman -S pip
+sudo pacman -S openal
 ```
 - Fedora/Centos/RHEL: (niesprawdzone)
 ```
 sudo dnf install cmake
 sudo dnf install python3
 sudo dnf install pip
+sudo dnf install openal
 ```
 - Ubuntu/Debian/Debiano-pochodne: (niesprawdzone)
 ```
 sudo apt-get install cmake
 sudo apt-get install python3
 sudo apt-get install pip
+sudo apt-get install openal
 ```
 - Windows
 
@@ -107,4 +112,6 @@ pip - z lini poleceń:
 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 python get-pip.py
 ```
+openal z: https://www.openal.org/downloads/
+
 I jeśli nie masz to jakiś generator (np. Mingw : https://sourceforge.net/projects/mingw/)
