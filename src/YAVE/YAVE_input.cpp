@@ -1,4 +1,9 @@
-#include "../../lib/YAVE_input.h"
+#include <YAVE_input.h>
+
+#include <GLFW/glfw3.h>
+
+#include <yave.h>
+
 
 YAVE_key YAVE_keys[YAVE_KEY_MAPPED];
 
@@ -7,6 +12,9 @@ float lastX , lastY;
 double xoffset, yoffset;
 bool firstMouse;
 bool mode_block;
+
+extern unsigned char YAVE_displayMode;
+extern GLFWwindow* window;
 
 void YAVE_keys_init(void){
     xoffset=0;

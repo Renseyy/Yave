@@ -1,8 +1,3 @@
-#executables
-Yave
-Yave.exe
-libassimp-5.dll
-
 #vscode
 .vscode/*
 .vscode/settings.json
@@ -11,7 +6,6 @@ libassimp-5.dll
 #precompiled objects
 *.o
 imgui.ini
-libYaveAll.a
 
 #cmake
 [Bb][Uu][Ii][Ll][Dd]

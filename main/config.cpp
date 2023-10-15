@@ -1,25 +1,53 @@
-#include "config.h"
+#include "config_main.h"
+
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
+//stb - textures
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+#include <unistd.h>
+
+#include <iostream>
+#include <array>
+
+#include <Camera.h>
+
+#include <yave_config.h>
+#include <yave.h>
+#include <YAVE_input.h>
 
 //zmienne globalne
 bool show_demo_window;
 uint VBO, VAO;
 
 GLFWwindow* window;
+Camera cam;
 
 float deltaTime;
 float lastFrame;
-u_char YAVE_displayMode;
- 
-Camera cam;
+unsigned char YAVE_displayMode;
+
 float YAVE_ratio;
 
+void Yave_Init(void){
+    YAVE_initWindow();
+    YAVE_configureImgui();
+    YAVE_configureBuffers();
+    YAVE_configureView();
+    YAVE_configureInput();
+}
 
+void Yave_End(void){
+    glfwTerminate();
+}
 
 /*
 initializes window for engine
 returns 0 if everything is okey
 */
-u_char YAVE_initWindow(void){
+unsigned char YAVE_initWindow(void){
     YAVE_ratio=(float)WIDTH / (float)HEIGHT;
  // glfw: initialize and configure
     // ------------------------------
@@ -97,9 +125,11 @@ void YAVE_configureView(void){
     deltaTime=0.0f;
     lastFrame=0.0f;
 
-    cam.Position=glm::vec3(0.0f,0.0f,4.0f);
+    cam.Position={0.0f, 0.0f, 4.0f};
     cam.MouseSensitivity=2.5f;
     cam.mode=CAM_DRONE;
+
+    stbi_set_flip_vertically_on_load(true);
 }
 
 

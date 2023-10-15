@@ -1,4 +1,8 @@
 #include <Listener.h>
+#include <Camera.h>
+#include <Sound.h>
+
+extern Camera cam;      //global varialibe
 
 void UpdateListener(void){
     float x=cam.Position[0];

@@ -15,4 +15,4 @@
 	url = https://github.com/nothings/stb
 [submodule "external/YAAL"]
 	path = external/YAAL
-	url = https://github.com/HalmonCelman/YAAL
+	url = https://github.com/HalmonCelman/YAAL.git

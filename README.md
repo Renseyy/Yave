@@ -1,14 +1,20 @@
 # YAVE - Yet Another Voxel Engine
 
-### Testowy projekt mający na celu naukę OpenGL i shaderów (GLSL). Celem jest stworzenie silnika do gry Sylian.
+## Testowy projekt mający na celu naukę OpenGL i shaderów (GLSL). Celem jest stworzenie silnika do gier( w tym do gry Sylian)
 Główne założenia tego silnika to:
 - ładne wyglądanie, efekty świetlne i graficzne
 - działać szybko i opierać się na karcie graficznej
 - obsługiwanie przez server, jest to de facto ( i ma być ) jedynie klient
 - musi być napisany w C++ ( z domieszką C ), może tymczasowo kożystac z LUA ( ale to raczej server )
 
+## Korzystanie z YAVE bez kompilacji
 
+- skopiuj do swojego projektu `libYave.a`
+- skopiuj folder `API`
+- w swoim projekcie daj `include "API/yave.h"`
+- jeszcze dokumentacja API nie powstała więc musisz się domyślić co robić ;)
 
+## Aby skompilować bieżącą wersję YAVE
 Należy zainstalować wszystkie zależności( instrukcja niżej w sekcji Zależności ) a następnie:
 - stworzyć jakiś folder w którym znajdą się utworzone pliki( np. **build** )
 - z katalogu głównego Yave - tam gdzie **README**
@@ -50,22 +56,6 @@ CMake 3.26.4 or higher is required.
 - w pierwszej linijce zmień na tą wersję cmake'a którą posiadasz
 - sprawdź czy działa, jeśli tak to pozostaw tą zmianę przy commicie, jeśli nie zaktualizuj cmake'a
 
-### Animacje
-
-Aby użyć animacji:
-
-1. w main() przed *render loop*:
-- zmień **Shader** na shader dla animacji: 
-```
-Shader <nazwa_shadera>(DIRECT_DIR("shaders/animations/anim_model.vs"), DIRECT_DIR("shaders/animations/anim_model.fs"));
-```
-- ustaw **Model** ***nazwa_modelu*** na ten, który ma być animowany ( zazwyczaj po prostu plik animacji )
-- ustaw **Animation** ***nazwa_animacji*** na plik animacji
-- ustaw **Animator** ***nazwa_animatora*** na adres twojej animacji `&<nazwa_animacji>`
-2. w pętli render:
-- przygotuj do renderowania: `YAVE_prepareRender(&<nazwa_shadera>);`
-- wykonaj klatke animacji i przygotuj do wyrysowania: `YAVE_execAnimation(&<nazwa_animatora>,&<nazwa_shadera>);`
-- wyrenderuj model: `YAVE_renderModel(&<nazwa_shadera>,&<nazwa_modelu>);`
 
 ## Zależności:
 

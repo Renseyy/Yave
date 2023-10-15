@@ -1,32 +1,29 @@
 #ifndef YAVE_INPUT_H
 #define YAVE_INPUT_H
 
-//glad
 #include <glad/gl.h>
-//glfw
 #include <GLFW/glfw3.h>
-//glm
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "Camera.h"
-#include "global_objects.h"
 
 #include <vector>
 #include <iostream>
 
-#include "../global.h"
+#include <Camera.h>
 
 #define YAVE_FLASH 3.0f //how many faster should it go
 #define YAVE_KEY_MAPPED 8 //number of mapped keys
 
 extern bool firstMouse;
 extern bool mode_block;
+
 extern Camera cam;
+
 struct YAVE_key{
-uint binding;
-u_char status;
-u_char pressed;
+unsigned int binding;
+unsigned char status;
+unsigned char pressed;
 };
 
 extern YAVE_key YAVE_keys[YAVE_KEY_MAPPED];
