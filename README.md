@@ -7,6 +7,8 @@ Główne założenia tego silnika to:
 - obsługiwanie przez server, jest to de facto ( i ma być ) jedynie klient
 - musi być napisany w C++ ( z domieszką C ), może tymczasowo kożystac z LUA ( ale to raczej server )
 
+## Zobacz [przykłady](https://github.com/HalmonCelman/Yave_Examples)
+
 ## Korzystanie z YAVE bez kompilacji
 
 - skopiuj do swojego projektu `libYave.a`

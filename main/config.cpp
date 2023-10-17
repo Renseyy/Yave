@@ -20,7 +20,7 @@
 
 //zmienne globalne
 bool show_demo_window;
-uint VBO, VAO;
+unsigned int VBO, VAO;
 
 GLFWwindow* window;
 Camera cam;
