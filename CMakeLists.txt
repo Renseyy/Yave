@@ -4,7 +4,7 @@ if (POLICY CMP0048)
   cmake_policy(SET CMP0048 NEW)
 endif (POLICY CMP0048)
 
-project(YAVE VERSION 1.0.0)
+project(YAVE VERSION 0.9.0)
 
 #compile options
 option(USE_DIRECT "use direct paths instead of relative - good for testing, bad for sharing" ON)
