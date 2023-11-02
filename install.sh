@@ -41,7 +41,6 @@ function web:getLast {
 function web:haveVersion {
     version=$1
     arch=$(getArch)
-    echo "$PACK_BASE&action=exist&version=$version&arch=$arch"
     curl -Ls "$PACK_BASE&action=exist&version=$version&arch=$arch"
 }
 
@@ -152,6 +151,7 @@ function git:clone {
 function main:install {
     # Check is last version exists in cloud
     lastVersion="$(web:getLast)"
+    lastVersion='1.0.2'
     inCloud="$(web:haveVersion "$lastVersion")"
     if [[ "$inCloud" == "true" ]]; then
         echo "Pobieram wersję z chmury";
@@ -221,7 +221,7 @@ if [[ "$1" == "upload" ]]; then
     time=$(date +%s)
     arch=$(getArch)
     manifest="version: $version\ntime: $time\narch: $arch"
-    echo -e "$manifest" > "manifestFile"
+    echo -e "$manifest" > "$manifestFile"
     echo -e "\e[32mCreated manifest file\e[0m"
 
     echo -e "\e[35mPackaging\e[0m"
