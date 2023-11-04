@@ -16,11 +16,11 @@ manifestFile="$packDir/manifest.vrn"
 tmpDir="$vorkDir/tmp"
 
 function __debianInstall {
-    sudo apt-get install cmake python3 pip -y;
+    sudo apt-get install cmake python3 pip git -y;
 }
 
 function __archInstall {
-    sudo pacman -S --noconfirm cmake python3 python-pip;
+    sudo pacman -S --noconfirm cmake python3 python-pip git;
 }
 
 function util:getYaveVersion {
@@ -69,14 +69,10 @@ function compiler:prepare {
         touch "$statusFile";
     fi
     status=$(cat "$statusFile");
-    if [[ "$status" == "" ]]; then
-        git:clone
-    fi
     echo -e "\e[32mStatus file created\e[0m"
 }
 function compiler:install {
     status=$(cat "$statusFile");
-    cd "$sourceDir" || exit
     if [[ "$status" == "" ]]; then
         # Install depending on platform
         idLike=$(grep 'ID_LIKE' /etc/os-release)
@@ -92,21 +88,24 @@ function compiler:install {
                 ;;
             *)
                 echo "System $baseOs is not supported yet";
-                cd "$baseDir" || exit
                 exit 255;
                 ;;
         esac
         if [ ! "$?" -eq 0 ]; then
             echo -e "\e[31mError occurred, exiting\e[0m"
-            cd "$baseDir" || exit
             exit 255;    
         fi
         echo "1" > "$statusFile"
         echo -e "\e[32mInstalled all dependences\e[0m"
-        cd "$baseDir" || exit
     fi
     status=$(cat "$statusFile");
-    if [[ ! "$status" -gt 1 ]]; then
+    if [[ "$status" == 1 ]]; then
+        git:clone
+        echo "2" > "$statusFile"
+        cd "$sourceDir" || exit
+    fi
+    status=$(cat "$statusFile");
+    if [[ "$status" == 2 ]]; then
         echo -e "\e[35mBuilding\e[0m"
         mkdir -p "$buildDir"
         cmake -S . -B "$buildDir"
@@ -115,11 +114,11 @@ function compiler:install {
             cd ../
             exit 255;    
         fi
-        echo "2" > "$statusFile"
+        echo "3" > "$statusFile"
         echo -e "\e[32mBuilded\e[0m"
     fi
     status=$(cat "$statusFile");
-    if [[ "$status" == "2" ]]; then
+    if [[ "$status" == "3" ]]; then
         echo -e "\e[35mBuilding libYave.a\e[0m"
         mkdir -p "$buildDir"
         cmake --build "$buildDir"
@@ -128,14 +127,26 @@ function compiler:install {
             cd ../
             exit 255;    
         fi
-        echo "2" > "$statusFile"
+        echo "4" > "$statusFile"
         echo -e "\e[32mBuilded libYave.a\e[0m"
     fi
     cd ../
 }
+function compiler:clone {
+    echo -e "\e[35mCloning of files\e[0m"
+    cp "$buildDir/libYAVE.a" "$baseDir/"
+    cp -r "$sourceDir/API" "$baseDir/"
+    echo -e "\e[35mCloned\e[0m"
+}
 function compiler:compile {
     compiler:prepare
     compiler:install
+    compiler:clone
+    echo -e "\e[32mInstallation has been completed\e[0m"
+    echo ""
+    cd "$baseDir" || exit
+    $0 upload
+
 }
 function git:clone {
     echo -e "\e[35mDownloading Yave source\e[0m"
@@ -152,15 +163,33 @@ function main:install {
     # Check is last version exists in cloud
     lastVersion="$(web:getLast)"
     lastVersion='1.0.2'
+    echo -e "\e[35mI check if we have in the cloud this version already compiled\e[0m"
     inCloud="$(web:haveVersion "$lastVersion")"
     if [[ "$inCloud" == "true" ]]; then
-        echo "Pobieram wersję z chmury";
+        echo -e "\e[32mBinary version found\e[0m"
+        echo -e -n "\e[33mDo you want to download it?\e[0m [Y/n]"
+        read -N 1 -s -r input 
+        if [[ "$input" == "n" || "$input" == "N" ]]; then
+            echo ""
+            echo -e -n "\e[33mDo you instead want to compile from source?\e[0m [Y/n]"
+            read -N 1 -s -r input 
+            if [[ "$input" == "n" || "$input" == "N" ]]; then 
+                echo -e "\e[35mCancelled\e[0m"
+                exit 0    
+            fi
+            echo ""
+            compiler:compile
+        fi
     else
         echo -e "\e[35mWe do not have this version in the cloud, automatic compilation will take place\e[0m"
         compiler:compile
     fi
 }
+
 if [[ "$1" == "upload" ]]; then
+    echo "If you don't mind, we will send your compiled version to our server so that others can download it"
+    echo "By agreeing to this, you also confirm that you have not modified the sources in any way ( we want our binary versions to correspond directly to the source code version )"
+    echo ""
     echo -e "\e[35mBy sending files to the server, you allow the identification file to be included\e[0m"
     echo "The identification file consists of:"
     echo " - the specifics of your system"
@@ -168,7 +197,7 @@ if [[ "$1" == "upload" ]]; then
     echo " - your email adress"
     echo " - your name "
     echo ""
-    echo -e -n "\e[33mDo you want to continue?\e[0m [Y/n]"
+    echo -e -n "\e[33mDo you agree?\e[0m [Y/n]"
     read -N 1 -s -r input 
     if [[ "$input" == "n" || "$input" == "N" ]]; then 
         echo -e "\e[35mCancelled\e[0m"
