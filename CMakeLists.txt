@@ -83,7 +83,7 @@ else()
   set(_pip_args "--user")
 endif()
 
-execute_process(COMMAND ${Python_EXECUTABLE} -m pip install -r ${CMAKE_SOURCE_DIR}/external/glad/requirements.txt)
+execute_process(COMMAND ${Python_EXECUTABLE} -m pip install -r ${CMAKE_CURRENT_SOURCE_DIR}/external/glad/requirements.txt)
 
 #generate glad
 glad_add_library(glad API gl:core=4.0)
@@ -116,7 +116,9 @@ list(APPEND EXTRA_INCLUDE_DIRS external/assimp/include)
 list(APPEND EXTRA_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/external/assimp/include)
 list(APPEND EXTRA_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/gladsources/glad/include)
 list(APPEND EXTRA_INCLUDE_DIRS external/stb)
+# YAAL
 list(APPEND EXTRA_INCLUDE_DIRS external/YAAL)
+list(APPEND EXTRA_INCLUDE_DIRS external/YAAL/external/OpenAL/include)
 
 # conio.h
 IF(NOT WIN32)

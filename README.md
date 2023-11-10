@@ -65,7 +65,10 @@ CMake 3.26.4 or higher is required.
 - cmake
 - python
 - pip
-
+- jinja2(? - na windowsie sie spotkałem) - kiedy już mamy pipa
+```
+pip install Jinja2
+```
 A poza tym? 
 
 **Nie ma!** - no dobra są, ale cmake robi to za nas, nie musimy nic instalować a mamy najnowsze wersje ;)
