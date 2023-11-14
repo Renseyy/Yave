@@ -1,4 +1,5 @@
 //fragment shader for animations
+// ! remember when updating to update also internal shaders in src/shaders.cpp
 
 #version 400 core
 out vec4 FragColor;

@@ -4,10 +4,11 @@ if (POLICY CMP0048)
   cmake_policy(SET CMP0048 NEW)
 endif (POLICY CMP0048)
 
-project(YAVE VERSION 0.9.0)
+project(YAVE VERSION 0.9.1)
 
 #compile options
 option(USE_DIRECT "use direct paths instead of relative - good for testing, bad for sharing" ON)
+option(COPY_ALL_OBJECTS "copy all objects into YAVE libary" ON)
 
 
 #option 1
@@ -60,6 +61,8 @@ add_subdirectory(external/glad/cmake)
 add_subdirectory(external/assimp)
 add_subdirectory(external/YAAL)
 
+if(COPY_ALL_OBJECTS)
+
 #add to static library
 list(APPEND EXTERNAL_OBJECTS $<TARGET_OBJECTS:glfw>)
 list(APPEND EXTERNAL_OBJECTS $<TARGET_OBJECTS:glad>)
@@ -69,7 +72,7 @@ list(APPEND EXTERNAL_OBJECTS $<TARGET_OBJECTS:alcommon>)
 list(APPEND EXTERNAL_OBJECTS $<TARGET_OBJECTS:OpenAL>)
 list(APPEND EXTERNAL_OBJECTS $<TARGET_OBJECTS:YAAL>)
 
-
+endif()
 
 
 

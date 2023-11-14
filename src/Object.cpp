@@ -54,6 +54,7 @@ void Object::Init(void){
         sound = new Sound();
         sound->Open(SoundFile.c_str());
         sound->CreateSource();
+        UpdateSoundPosition();
     }
 }
 

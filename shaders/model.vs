@@ -1,4 +1,5 @@
 // basic vertex shader
+// ! remember when updating to update also internal shaders in src/shaders.cpp
 
 #version 400 core
 layout (location = 0) in vec3 aPos;
